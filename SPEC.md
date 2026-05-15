@@ -1,44 +1,44 @@
 # The Electric Kool-Aid Background Remover - Project Brief
 
-A portable Windows desktop tool for comparing background-removal models
-across a folder of images. Built for internal use at Dyalog, primarily to
-process staff photography. This brief is intended to bring another Claude
-instance up to speed on context, decisions, and conventions.
+A free, local, privacy-respecting background remover for Windows. Removes
+backgrounds from single images or whole folders using a choice of six AI
+models, with lossless PNG, TIFF, or WebP output.
 
-**Provenance:** this entire project - application code, documentation,
-design decisions, and this SPEC - was written by Claude (Anthropic) across
-multiple conversations, directed by a human user. The one exception is the
-name, which the human came up with. No code or docs were written by hand.
-If you are a future Claude instance reading this: yes, you wrote most of
-it. Try not to undo the good bits.
+This document is the developer and contributor handover brief. Its primary
+audience is a future Claude instance being asked to extend or maintain the
+project - read this before touching any code. It covers the context behind
+the tool, why decisions were made, the model lineup, known caveats, and
+conventions to follow. Everything here was written by Claude across multiple
+conversations; the design decisions were made by the human.
+
+If you are a Claude instance picking this up: this document exists
+specifically for you. Read it in full before making changes. The version
+history at the bottom is particularly useful for understanding what has
+already been tried and why.
+
+**Provenance:** the application code, documentation, and this SPEC were
+written by Claude (Anthropic). The design decisions, product direction, and
+the name were the human's. No code or docs were written by hand.
 
 ## Who this is for
 
-A single user (the developer) on a high-spec Windows workstation:
+Anyone who wants to remove image backgrounds locally without uploading to
+a cloud service, on Windows. The original use case was processing
+high-resolution professional photography (300 DPI group portraits) for
+marketing and web use, where edge quality on hair and complex backgrounds
+matters more than speed.
 
-- Windows 11 Pro
-- AMD Ryzen 9 9950X3D (16C/32T), 64 GB RAM
-- NVIDIA RTX 2080 (Turing, 8 GB) - present but workflow targets CPU
-- Python 3.14 (currently the only Python installed); PyTorch wheels confirmed
-  working on 3.14 as of May 2026
-- Git installed and on PATH (required for installing BEN2)
-
-The user is technically literate, comfortable with CLIs but prefers a small
-GUI for repeated batch operations. They do not care about per-image speed  - 
-they care about output quality and being able to A/B test models on real
-content.
+The tool is also well suited for anyone who wants to compare multiple AI
+background-removal models on their own material before committing to one.
 
 ## Purpose
 
-The user receives high-resolution group photographs from a professional
-photographer at 300 DPI. They need transparent-background cutouts of these
-photos for marketing/web/print use. Different background-removal models
-produce visibly different results on different subject matter (especially
-on hair edges and complex backgrounds), and the user wants to compare
-candidates side-by-side rather than commit to one model up front.
-
-The tool batch-processes a folder of images through one or more selected
-models and writes outputs to labelled sibling folders for easy comparison.
+The tool processes a folder or single image through one or more selected
+background-removal models and writes transparent-background cutouts to
+labelled sibling folders. Different models produce visibly different results
+on different subject matter - especially on hair edges, glasses, and complex
+backgrounds - and having outputs in separate named folders makes it easy to
+compare results before committing to one model for a full batch.
 
 ## Functional requirements
 
@@ -82,9 +82,9 @@ models and writes outputs to labelled sibling folders for easy comparison.
 
 ## Non-goals
 
-- GPU acceleration. The user has an RTX 2080 but explicitly does not care
-  about speed; CPU inference is fine. Code falls back to GPU automatically
-  if `torch.cuda.is_available()` returns True, but no setup is required.
+- GPU acceleration. Speed is not a priority; CPU inference is fine for the
+  intended use case. Code falls back to GPU automatically if
+  `torch.cuda.is_available()` returns True, but no setup is required.
 - Bundling as a `.exe`. PyTorch alone would make any PyInstaller bundle
   multiple GB. The tool is portable as a `.py` file that uses the system
   Python and self-bootstraps its dependencies.
@@ -110,7 +110,7 @@ changes needed.
 available via rembg but was deliberately excluded from this build because
 its CC BY-NC 4.0 licence forbids commercial use. Any future model added
 here should have a permissive licence (MIT / Apache-2.0 etc.) confirmed
-before inclusion, since Dyalog's likely uses are commercial.
+before inclusion, since the likely uses are commercial.
 
 ## Technical decisions
 
