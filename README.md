@@ -68,8 +68,6 @@ the hair perfectly but struggles with a busy background. There's no way to
 know in advance which will work best on your specific images - just try
 them all and compare.
 
-That's the whole point of this tool. Run several models on a photo, look at the results side by side, and pick the one that worked best for that image. You may find that different photos need different models - a portrait with simple hair might look best with BiRefNet-General, while a shot with complex flyaway hair might need BEN2. There's no single right answer, and that's fine.
-
 ## Models included
 
 All bundled models are permissively licensed (MIT) and suitable for
@@ -181,9 +179,9 @@ self-identifying even if you move them out of their folders.
 - **GPU acceleration:** if you have an NVIDIA GPU and CUDA-enabled PyTorch,
   the tool will use it automatically - no configuration needed. Processing
   time drops from 10–30 seconds per image to 1–3 seconds.
-- To find the best model for your material, tick several on a representative
-  image and compare the results. Once you know which works best, tick only
-  that one for your main batch run.
+- To find the best model for your material, tick several and compare the
+  results. Different images may need different models - there's no single
+  right answer.
 - The **Copy Output** button above the output log copies the entire run
   log to your clipboard - useful for sharing timing data or error messages.
 - WebP has a hard 16383px-per-axis size limit. If your source images are
@@ -202,7 +200,7 @@ images:
 have an NVIDIA GPU it drops to 1–3 seconds per image, which makes large
 batches much more practical.
 
-**You can always resume.** If the run is interrupted for any reason  - 
+**You can always resume.** If the run is interrupted for any reason -
 crash, power cut, Windows deciding to restart - just run it again on the
 same folder. Any image that already has output in the destination folder
 will be skipped. You won't lose progress.
