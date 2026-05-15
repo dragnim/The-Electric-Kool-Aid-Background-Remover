@@ -85,7 +85,6 @@ COMMON ISSUES:
 - "Git is not recognized" - Git is not installed or not on PATH, reinstall it
 - Install fails on a package - try Python 3.12 if you are on a newer version
 - "No images found" - only the top level of the folder is scanned, not subfolders
-- Progress bar animating at startup - cosmetic only, fixed in v3.8
 - WebP "image too large" error - your image exceeds 16383px, use PNG or TIFF instead
 
 Please help me with the following question:

@@ -88,6 +88,17 @@ to compare.
 
 ## Installation
 
+### Quickest safe install
+
+```powershell
+git clone https://github.com/dragnim/The-Electric-Kool-Aid-Background-Remover.git
+cd The-Electric-Kool-Aid-Background-Remover
+py -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+py the-electric-kool-aid-background-remover.py
+```
+
 ### Recommended for most users: virtual environment
 
 A virtual environment keeps the dependencies isolated from the rest of your
