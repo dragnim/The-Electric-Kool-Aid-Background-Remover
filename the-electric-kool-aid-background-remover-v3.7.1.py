@@ -1,19 +1,19 @@
 """
-The Electric Kool-Aid Background Remover  (v3.7)
-================================================
+The Electric Kool-Aid Background Remover  (v3.7.1)
+==================================================
 
 A single-file Tkinter app that runs background removal across multiple models
 (BEN2, BiRefNet-General/HR/Portrait/Massive/Lite) and saves outputs into
 labelled subfolders inside the chosen input location.
 
 To run:
-    py the-electric-kool-aid-background-remover-v3.7.py
+    py the-electric-kool-aid-background-remover-v3.7.1.py
 
 On first launch the app will detect missing Python dependencies and offer to
 install them (rembg, BEN2 from GitHub, torch, opencv-python, Pillow).
 
 Requires:
-    - Python 3.10+ on Windows (Python 3.14 verified working with current
+    - Python 3.12+ on Windows (Python 3.14 verified working with current
       PyTorch wheels).
     - Git installed and on PATH (BEN2 ships from GitHub, not PyPI).
 """
@@ -28,7 +28,7 @@ from tkinter import ttk, filedialog, messagebox, scrolledtext
 
 # --- Constants ---------------------------------------------------------------
 
-__version__ = "3.7"
+__version__ = "3.7.1"
 
 APP_TITLE = f"The Electric Kool-Aid Background Remover v{__version__}"
 WINDOW_SIZE = "780x820"
@@ -42,13 +42,13 @@ WEBP_MAX_DIM = 16383
 # The embedded window icon (LEMON_ICO_B64) lives at the bottom of the file —
 # it's bulky base64 and would dominate the top of the source if placed here.
 
-# import-name -> pip-install-target
+# import-name -> pip-install-target (versions pinned to match requirements.txt)
 REQUIRED_DEPS = {
-    "PIL": "Pillow",
-    "torch": "torch",
-    "cv2": "opencv-python",
-    "rembg": "rembg[cpu]",
-    "ben2": "git+https://github.com/PramaLLC/BEN2.git",
+    "PIL":   "Pillow==12.2.0",
+    "torch": "torch==2.12.0",
+    "cv2":   "opencv-python==4.13.0.92",
+    "rembg": "rembg[cpu]==2.0.75",
+    "ben2":  "git+https://github.com/PramaLLC/BEN2.git@2c99a5da477b5523585bfa5c893888a6e818a8f6",
 }
 
 # Display name -> metadata

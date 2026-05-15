@@ -184,7 +184,7 @@ before inclusion, since Dyalog's likely uses are commercial.
 ## File layout
 
 The whole app is one file, named with its version: `the-electric-kool-aid-background-remover-v{version}.py`
-(current: `the-electric-kool-aid-background-remover-v3.7.py`). There are no other runtime
+(current: `the-electric-kool-aid-background-remover-v3.7.1.py`). There are no other runtime
 assets. The earlier batch-processing scripts (`compare_bg_removal.py`,
 `compare_all_tiff.py`, etc.) remain in the user's working folder as a
 reference / fallback for headless runs.
@@ -196,7 +196,7 @@ Two documentation files sit alongside the app:
   potentially via GitHub. Assumes no prior context. Not versioned in the
   filename — a README always describes the current state of the repo.
 - `SPEC-v{version}.md` — developer/handover docs, versioned to match the
-  app (current: `SPEC-v3.7.md`). Context, decisions, conventions, caveats.
+  app (current: `SPEC-v3.7.1.md`). Context, decisions, conventions, caveats.
   Written for the next developer (human or AI) picking up the codebase.
 
 The version string lives in a single `__version__` constant near the top of
@@ -223,7 +223,7 @@ SPEC, add an entry to the version history below.
 ## Run instructions for the user
 
 ```
-py the-electric-kool-aid-background-remover-v3.7.py
+py the-electric-kool-aid-background-remover-v3.7.1.py
 ```
 
 On first run, the app will offer to install missing dependencies. After
@@ -232,6 +232,13 @@ Run.
 
 ## Version history
 
+- **v3.7.1** — patch: `REQUIRED_DEPS` auto-install targets now pinned to
+  match `requirements.txt` (previously unpinned, so quick-start and venv
+  routes could diverge); Python version requirement corrected to 3.12+ in
+  docstring (was 3.10+, inconsistent with README); README install section
+  reordered so venv route is presented first and explicitly labelled
+  "Recommended for most users", quick-start labelled as the casual/own-machine
+  route.
 - **v3.7** — Cancel button stops the run cleanly after the current image
   finishes (sets a flag checked at the top of each image loop iteration);
   Open Output Folder button opens the input directory in Explorer after a

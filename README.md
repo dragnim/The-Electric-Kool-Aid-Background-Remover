@@ -54,36 +54,41 @@ to compare.
 
 ## Installation
 
-### Quick start (installs into your system Python)
+### Recommended for most users: virtual environment
+
+A virtual environment keeps the dependencies isolated from the rest of your
+Python installation and gives you a reproducible setup from pinned versions.
+
+```
+py -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+py the-electric-kool-aid-background-remover-v3.7.1.py
+```
+
+`requirements.txt` contains pinned versions from a known-working environment
+(Python 3.14.3, Windows 11, May 2026). See the file for notes on GPU support.
+
+### Quick start (for your own machine, installs into system Python)
+
+If you just want to get going and aren't worried about dependency isolation:
 
 1. Install Python from <https://www.python.org/downloads/> if you don't
    already have it. During install, tick "Add Python to PATH".
 2. Install Git from <https://git-scm.com/download/win> if you don't
    already have it. Use the default options.
-3. Download `the-electric-kool-aid-background-remover-v3.7.py` and put it
+3. Download `the-electric-kool-aid-background-remover-v3.7.1.py` and put it
    anywhere convenient.
 4. Open a Command Prompt or PowerShell window in that folder and run:
 
    ```
-   py the-electric-kool-aid-background-remover-v3.7.py
+   py the-electric-kool-aid-background-remover-v3.7.1.py
    ```
 
 5. On first launch the app detects missing Python packages (PyTorch, rembg,
    BEN2, Pillow, OpenCV) and offers to install them. Accept; the install
    runs to several gigabytes and can take 10–20 minutes on a reasonable
    connection. Subsequent launches start instantly.
-
-### Recommended: virtual environment (keeps dependencies isolated)
-
-```
-py -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-py the-electric-kool-aid-background-remover-v3.7.py
-```
-
-`requirements.txt` contains pinned versions from a known-working environment
-(Python 3.14.3, Windows 11, May 2026). See the file for notes on GPU support.
 
 ## Usage
 
@@ -132,7 +137,7 @@ installing it.
 
 **Install fails on a specific package.** Python 3.14 is bleeding-edge and
 the occasional ML library lags behind. Try installing Python 3.12 and
-running with `py -3.12 the-electric-kool-aid-background-remover-v3.7.py`.
+running with `py -3.12 the-electric-kool-aid-background-remover-v3.7.1.py`.
 
 **"No images found."** The folder you picked has no files with a
 supported extension. Subfolders are not scanned — only the top level of
