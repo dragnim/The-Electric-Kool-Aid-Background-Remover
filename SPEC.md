@@ -232,6 +232,8 @@ Run.
 
 ## Version history
 
+- **v3.8** - fix progress bar animating at startup on some Windows themes;
+  `progress.stop()` called immediately after widget creation.
 - **v3.7.1** - patch: `REQUIRED_DEPS` auto-install targets now pinned to
   match `requirements.txt` (previously unpinned, so quick-start and venv
   routes could diverge); Python version requirement corrected to 3.12+ in

@@ -1,5 +1,5 @@
 """
-The Electric Kool-Aid Background Remover  (v3.7.1)
+The Electric Kool-Aid Background Remover  (v3.8)
 ==================================================
 
 A single-file Tkinter app that runs background removal across multiple models
@@ -28,7 +28,7 @@ from tkinter import ttk, filedialog, messagebox, scrolledtext
 
 # --- Constants ---------------------------------------------------------------
 
-__version__ = "3.7.1"
+__version__ = "3.8"
 
 APP_TITLE = f"The Electric Kool-Aid Background Remover v{__version__}"
 WINDOW_SIZE = "780x820"
@@ -234,6 +234,7 @@ class App(tk.Tk):
         # Progress bar (indeterminate; runs while processing)
         self.progress = ttk.Progressbar(self, mode="indeterminate", length=300)
         self.progress.pack(pady=(0, 10))
+        self.progress.stop()  # prevent auto-animation on some Windows themes
 
         # Log
         f = ttk.LabelFrame(self, text="Output")
