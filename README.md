@@ -17,8 +17,9 @@ of six AI models so you can find the one that works best on your material.
 Output is PNG, TIFF, or WebP with transparency preserved and DPI metadata
 carried through - ready for web, print, or further editing.
 
-Built for professional photography (300 DPI source material) where edge
-quality on hair, glasses, and complex backgrounds matters.
+Originally built for high-resolution professional photography where edge
+quality on hair, glasses, and complex backgrounds matters - but in reality
+you can run anything through it. Just try it and see.
 
 ![The Electric Kool-Aid Background Remover v3.8](assets/screenshot.png)
 
@@ -192,7 +193,7 @@ self-identifying even if you move them out of their folders.
 
 ## Large batches
 
-The tool handles large batches fine — there's no hard limit on the number
+The tool handles large batches fine - there's no hard limit on the number
 of images. A few things worth knowing if you're processing hundreds of
 images:
 
@@ -201,8 +202,8 @@ images:
 have an NVIDIA GPU it drops to 1–3 seconds per image, which makes large
 batches much more practical.
 
-**You can always resume.** If the run is interrupted for any reason —
-crash, power cut, Windows deciding to restart — just run it again on the
+**You can always resume.** If the run is interrupted for any reason  - 
+crash, power cut, Windows deciding to restart - just run it again on the
 same folder. Any image that already has output in the destination folder
 will be skipped. You won't lose progress.
 
@@ -217,7 +218,7 @@ sluggish on very large batches. Use the **Copy Output** button to grab
 the full log if you need to review it.
 
 **Models are loaded once.** The AI models are loaded into memory at the
-start of a run and reused for every image — you don't pay the loading
+start of a run and reused for every image - you don't pay the loading
 cost per image. This is the right behaviour for large batches and means
 memory usage stays stable throughout the run.
 
