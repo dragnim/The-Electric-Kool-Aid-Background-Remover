@@ -184,7 +184,7 @@ before inclusion, since Dyalog's likely uses are commercial.
 ## File layout
 
 The whole app is one file, named with its version: `the-electric-kool-aid-background-remover-v{version}.py`
-(current: `the-electric-kool-aid-background-remover-v3.6.py`). There are no other runtime
+(current: `the-electric-kool-aid-background-remover-v3.7.py`). There are no other runtime
 assets. The earlier batch-processing scripts (`compare_bg_removal.py`,
 `compare_all_tiff.py`, etc.) remain in the user's working folder as a
 reference / fallback for headless runs.
@@ -196,7 +196,7 @@ Two documentation files sit alongside the app:
   potentially via GitHub. Assumes no prior context. Not versioned in the
   filename — a README always describes the current state of the repo.
 - `SPEC-v{version}.md` — developer/handover docs, versioned to match the
-  app (current: `SPEC-v3.6.md`). Context, decisions, conventions, caveats.
+  app (current: `SPEC-v3.7.md`). Context, decisions, conventions, caveats.
   Written for the next developer (human or AI) picking up the codebase.
 
 The version string lives in a single `__version__` constant near the top of
@@ -223,7 +223,7 @@ SPEC, add an entry to the version history below.
 ## Run instructions for the user
 
 ```
-py the-electric-kool-aid-background-remover-v3.6.py
+py the-electric-kool-aid-background-remover-v3.7.py
 ```
 
 On first run, the app will offer to install missing dependencies. After
@@ -232,6 +232,15 @@ Run.
 
 ## Version history
 
+- **v3.7** — Cancel button stops the run cleanly after the current image
+  finishes (sets a flag checked at the top of each image loop iteration);
+  Open Output Folder button opens the input directory in Explorer after a
+  run completes; `requirements.txt` added with pinned versions from a
+  known-working environment (Python 3.14.3, May 2026); `MODEL-LICENCES.md`
+  added documenting each bundled model's source, licence, and verification
+  date; AI Slop disclaimer moved from top of README to a Provenance section
+  at the bottom per reviewer feedback (the joke works, it just shouldn't
+  be the first thing a non-technical stakeholder sees).
 - **v3.6** — window icon properly working at last. Replaced the embedded
   .ico with a true multi-resolution version (16/32/48 px renders, each
   drawn at native size). Previous .ico in v3.5 was a single 96×97 image

@@ -1,31 +1,8 @@
 # The Electric Kool-Aid Background Remover
 
-> **⚠️ 100% Prime AI Slop**
->
-> This tool — every line of code, every comment, every doc, every design
-> decision, the version-numbering scheme, the choice of models, the WebP
-> canvas-limit validation, the lemon icon, this very sentence — was written
-> entirely by [Claude](https://claude.ai) (Anthropic), with a human
-> providing direction, feedback, and the occasional "that's rubbish, try
-> again."
->
-> The one exception: the name. **The Electric Kool-Aid Background Remover**
-> was coined by the human. Credit where it's due.
->
-> No code was written by hand. No docs were written by hand. The human's
-> contribution was knowing what they wanted, asking good questions, pushing
-> back when Claude got it wrong (which happened), and coming up with a
-> genuinely good name. We are leaning into this fully and without shame.
-> Vibe coding is real, it works, and this is what it looks like when you
-> don't pretend otherwise. If you find a bug, Claude probably wrote it.
-> If you like it, Claude probably wrote that too. Except the name.
-
----
-
 A small Windows desktop tool that runs a folder of images through one or
 more AI background-removal models and saves transparent-background cutouts
-into labelled output folders, so you can compare model results
-side-by-side.
+into labelled output folders, so you can compare results side-by-side.
 
 Built for processing professional photography (300 DPI source material)
 where edge quality on hair, glasses, and complex backgrounds matters more
@@ -77,22 +54,36 @@ to compare.
 
 ## Installation
 
+### Quick start (installs into your system Python)
+
 1. Install Python from <https://www.python.org/downloads/> if you don't
    already have it. During install, tick "Add Python to PATH".
 2. Install Git from <https://git-scm.com/download/win> if you don't
    already have it. Use the default options.
-3. Download `the-electric-kool-aid-background-remover-v3.6.py` and put it anywhere
-   convenient.
+3. Download `the-electric-kool-aid-background-remover-v3.7.py` and put it
+   anywhere convenient.
 4. Open a Command Prompt or PowerShell window in that folder and run:
 
    ```
-   py the-electric-kool-aid-background-remover-v3.6.py
+   py the-electric-kool-aid-background-remover-v3.7.py
    ```
 
-5. On first launch the app will detect missing Python packages (PyTorch,
-   rembg, BEN2, Pillow, OpenCV) and offer to install them for you. Accept;
-   the install runs to several gigabytes and can take 10–20 minutes on a
-   reasonable connection. Subsequent launches start instantly.
+5. On first launch the app detects missing Python packages (PyTorch, rembg,
+   BEN2, Pillow, OpenCV) and offers to install them. Accept; the install
+   runs to several gigabytes and can take 10–20 minutes on a reasonable
+   connection. Subsequent launches start instantly.
+
+### Recommended: virtual environment (keeps dependencies isolated)
+
+```
+py -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+py the-electric-kool-aid-background-remover-v3.7.py
+```
+
+`requirements.txt` contains pinned versions from a known-working environment
+(Python 3.14.3, Windows 11, May 2026). See the file for notes on GPU support.
 
 ## Usage
 
@@ -105,11 +96,12 @@ to compare.
 4. Click **Run** and confirm.
 5. Watch the log and the status bar. The progress bar pulses while the
    app is working and the status bar shows which image and model is
-   currently being processed (e.g. "Image 3/12 – BEN2…").
-6. When the run finishes, look inside the input location. You'll find new
-   subfolders named like `BEN2-PNG`, `BiRefNet-General-WebP`, etc., each
-   containing one cutout per input image. For single-image runs the
-   subfolders are created next to the chosen image.
+   currently being processed (e.g. "Image 3/12 – BEN2…"). Click
+   **Cancel** at any time to stop after the current image finishes.
+6. When the run finishes, click **Open Output Folder** to go straight to
+   the results in Explorer, or look inside the input location manually.
+   You'll find subfolders named like `BEN2-PNG`, `BiRefNet-General-WebP`,
+   etc., each containing one cutout per input image.
 
 Output filenames carry the model name as a suffix
 (`photo_01_BEN2.png`, `photo_01_BiRefNet-General.png`) so the files stay
@@ -140,7 +132,7 @@ installing it.
 
 **Install fails on a specific package.** Python 3.14 is bleeding-edge and
 the occasional ML library lags behind. Try installing Python 3.12 and
-running with `py -3.12 the-electric-kool-aid-background-remover-v3.6.py`.
+running with `py -3.12 the-electric-kool-aid-background-remover-v3.7.py`.
 
 **"No images found."** The folder you picked has no files with a
 supported extension. Subfolders are not scanned — only the top level of
@@ -176,4 +168,27 @@ multi-resolution `.ico` via [favicon.io](https://favicon.io/emoji-favicons/lemon
 MIT — see [LICENSE](LICENSE).
 
 The models bundled with this tool are also MIT-licensed and free for
-commercial use.
+commercial use. See [MODEL-LICENCES.md](MODEL-LICENCES.md) for the full
+details on each model.
+
+## Provenance
+
+> **100% Prime AI Slop** 🍋
+>
+> This tool — every line of code, every comment, every doc, every design
+> decision, the version-numbering scheme, the choice of models, the WebP
+> canvas-limit validation, the lemon icon, this very sentence — was written
+> entirely by [Claude](https://claude.ai) (Anthropic), with a human
+> providing direction, feedback, and the occasional "that's rubbish, try
+> again."
+>
+> The one exception: the name. **The Electric Kool-Aid Background Remover**
+> was coined by the human. Credit where it's due.
+>
+> No code was written by hand. No docs were written by hand. The human's
+> contribution was knowing what they wanted, asking good questions, pushing
+> back when Claude got it wrong (which happened), and coming up with a
+> genuinely good name. We are leaning into this fully and without shame.
+> Vibe coding is real, it works, and this is what it looks like when you
+> don't pretend otherwise. If you find a bug, Claude probably wrote it.
+> If you like it, Claude probably wrote that too. Except the name.

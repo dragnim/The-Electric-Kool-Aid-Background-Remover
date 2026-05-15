@@ -1,5 +1,5 @@
 """
-The Electric Kool-Aid Background Remover  (v3.6)
+The Electric Kool-Aid Background Remover  (v3.7)
 ================================================
 
 A single-file Tkinter app that runs background removal across multiple models
@@ -7,7 +7,7 @@ A single-file Tkinter app that runs background removal across multiple models
 labelled subfolders inside the chosen input location.
 
 To run:
-    py the-electric-kool-aid-background-remover-v3.6.py
+    py the-electric-kool-aid-background-remover-v3.7.py
 
 On first launch the app will detect missing Python dependencies and offer to
 install them (rembg, BEN2 from GitHub, torch, opencv-python, Pillow).
@@ -28,7 +28,7 @@ from tkinter import ttk, filedialog, messagebox, scrolledtext
 
 # --- Constants ---------------------------------------------------------------
 
-__version__ = "3.6"
+__version__ = "3.7"
 
 APP_TITLE = f"The Electric Kool-Aid Background Remover v{__version__}"
 WINDOW_SIZE = "780x820"
@@ -131,7 +131,9 @@ class App(tk.Tk):
         self.geometry(WINDOW_SIZE)
         self._set_icon()
         self.deps_ready = False
-        self._dots_job = None  # after() id for the processing-dots animation
+        self._dots_job = None       # after() id for the processing-dots animation
+        self._cancel_requested = False  # set True by Cancel button
+        self._last_input_dir = None     # populated after each run for Open Folder
 
         self._build_ui()
         threading.Thread(target=self._check_deps, daemon=True).start()
@@ -219,10 +221,15 @@ class App(tk.Tk):
                       wraplength=700, justify="left",
                       font=("", 9)).pack(anchor="w", padx=22)
 
-        # Run button
-        self.run_btn = ttk.Button(self, text="Run", command=self._run,
+        # Run / Cancel buttons
+        btn_row = ttk.Frame(self)
+        btn_row.pack(pady=10)
+        self.run_btn = ttk.Button(btn_row, text="Run", command=self._run,
                                   state="disabled")
-        self.run_btn.pack(pady=10)
+        self.run_btn.pack(side="left", padx=5)
+        self.cancel_btn = ttk.Button(btn_row, text="Cancel",
+                                     command=self._cancel, state="disabled")
+        self.cancel_btn.pack(side="left", padx=5)
 
         # Progress bar (indeterminate; runs while processing)
         self.progress = ttk.Progressbar(self, mode="indeterminate", length=300)
@@ -235,6 +242,10 @@ class App(tk.Tk):
         log_toolbar.pack(fill="x", padx=5, pady=(5, 0))
         ttk.Button(log_toolbar, text="Copy Output",
                    command=self._copy_log, width=14).pack(side="right")
+        self.open_folder_btn = ttk.Button(
+            log_toolbar, text="Open Output Folder",
+            command=self._open_output_folder, state="disabled", width=20)
+        self.open_folder_btn.pack(side="right", padx=(0, 5))
         self.log = scrolledtext.ScrolledText(f, height=12,
                                              font=("Consolas", 9))
         self.log.pack(fill="both", expand=True, padx=5, pady=5)
@@ -264,6 +275,20 @@ class App(tk.Tk):
         # hand the data over to the OS clipboard before the app exits.
         self.update()
         self._status("Log copied to clipboard.")
+
+    def _cancel(self):
+        """Request cancellation of the current run."""
+        self._cancel_requested = True
+        self._log("Cancellation requested — stopping after current image.")
+        self._status("Cancelling\u2026")
+        self.after(0, lambda: self.cancel_btn.config(state="disabled"))
+
+    def _open_output_folder(self):
+        """Open the last input directory in Windows Explorer."""
+        if self._last_input_dir and Path(self._last_input_dir).exists():
+            os.startfile(self._last_input_dir)
+        else:
+            self._status("No output folder to open yet.")
 
     def _status(self, msg):
         self.after(0, self.status_var.set, msg)
@@ -451,6 +476,10 @@ class App(tk.Tk):
             return
 
         self.run_btn.config(state="disabled")
+        self.cancel_btn.config(state="normal")
+        self.open_folder_btn.config(state="disabled")
+        self._cancel_requested = False
+        self._last_input_dir = str(input_dir)
         self._start_progress("Processing")
         threading.Thread(
             target=self._process,
@@ -526,6 +555,9 @@ class App(tk.Tk):
             self._log("")
             t_total = time.time()
             for idx, img_path in enumerate(images, 1):
+                if self._cancel_requested:
+                    self._log("\n=== Cancelled by user ===")
+                    break
                 base = img_path.stem
                 self._log(f"[{idx}/{len(images)}] {img_path.name}")
                 self._set_status_base(
@@ -578,7 +610,12 @@ class App(tk.Tk):
             self._log(f"\nERROR: {e}")
             self._stop_progress(f"Error: {e}")
         finally:
-            self.after(0, lambda: self.run_btn.config(state="normal"))
+            def _restore_buttons():
+                self.run_btn.config(state="normal")
+                self.cancel_btn.config(state="disabled")
+                if self._last_input_dir:
+                    self.open_folder_btn.config(state="normal")
+            self.after(0, _restore_buttons)
 
 
 # --- Embedded window icon ----------------------------------------------------

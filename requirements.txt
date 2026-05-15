@@ -1,0 +1,34 @@
+# Requirements for The Electric Kool-Aid Background Remover v3.7
+# Generated from a known-working environment:
+#   Python 3.14.3 on Windows 11, AMD Ryzen 9 9950X3D, NVIDIA RTX 2080
+#   Last verified: May 2026
+#
+# Install into a virtual environment:
+#   py -m venv .venv
+#   .venv\Scripts\activate
+#   pip install -r requirements.txt
+#
+# Note: BEN2 is installed from GitHub, not PyPI. Git must be on PATH.
+# Note: torch is the CPU build. For GPU support, replace with the
+#       appropriate CUDA wheel from https://pytorch.org/get-started/locally/
+
+# Core inference
+torch==2.12.0
+torchvision==0.27.0
+
+# Background removal backends
+rembg==2.0.75
+ben2 @ git+https://github.com/PramaLLC/BEN2.git@2c99a5da477b5523585bfa5c893888a6e818a8f6
+
+# Image handling
+Pillow==12.2.0
+opencv-python==4.13.0.92
+
+# rembg dependencies (pinned for reproducibility)
+onnxruntime==1.26.0
+PyMatting==1.1.15
+scipy==1.17.1
+scikit-image==0.26.0
+numpy==2.4.4
+tifffile==2026.5.2
+pooch==1.9.0
