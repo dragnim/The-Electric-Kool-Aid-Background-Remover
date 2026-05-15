@@ -6,7 +6,7 @@
 
 ---
 
-## What is it?
+## What is this tool?
 
 A free, local, privacy-respecting background remover for Windows. Runs
 entirely on your own machine - no cloud upload, no subscription, no
@@ -21,6 +21,26 @@ Built for professional photography (300 DPI source material) where edge
 quality on hair, glasses, and complex backgrounds matters.
 
 ![The Electric Kool-Aid Background Remover v3.8](assets/screenshot.png)
+
+## What this tool is not
+
+- **Not a web service.** Everything runs locally; nothing is uploaded anywhere.
+  This is the point.
+- **Not a compression tool.** All output formats are configured for maximum
+  quality and lossless encoding. PNG and TIFF are inherently lossless.
+  WebP output also uses lossless mode - the files are smaller than PNG
+  due to better compression, not because quality has been sacrificed.
+  None of the outputs are "web-optimised" in the sense of being compressed
+  for fast page loads; they are full-quality cutouts intended for further
+  use in design, print, or web pipelines where you control the final
+  compression step.
+- **Not bundled as an `.exe`.** PyTorch makes a bundled build several GB; the
+  `.py` file plus auto-install of dependencies is the intended distribution.
+- **Not cross-platform.** The auto-install assumes Windows. The underlying
+  Python code is not Windows-specific and could plausibly run on macOS or
+  Linux with manual dependency setup, but is not tested there.
+- **Not fast.** A 24 MP image on CPU takes 10–30 seconds per model. If you
+  need speed, see the Tips section on GPU support.
 
 ## What it does
 
@@ -201,7 +221,7 @@ start of a run and reused for every image — you don't pay the loading
 cost per image. This is the right behaviour for large batches and means
 memory usage stays stable throughout the run.
 
-
+## Troubleshooting
 
 **"Git is not recognized…" during install.** Git isn't on your PATH.
 Reinstall Git with the default options, or open a fresh terminal after
@@ -222,26 +242,6 @@ or every image failed. Check the log for `FAILED` lines.
 **"Image too large for WebP."** WebP cannot encode images bigger than
 16383px on either axis. The dialog lists which images are over the limit.
 Either pick PNG or TIFF, or remove/downscale the listed images.
-
-## What this tool is not
-
-- Not a web service. Everything runs locally; nothing is uploaded anywhere.
-  This is the point.
-- Not a compression tool. All output formats are configured for maximum
-  quality and lossless encoding. PNG and TIFF are inherently lossless.
-  WebP output also uses lossless mode - the files are smaller than PNG
-  due to better compression, not because quality has been sacrificed.
-  None of the outputs are "web-optimised" in the sense of being compressed
-  for fast page loads; they are full-quality cutouts intended for further
-  use in design, print, or web pipelines where you control the final
-  compression step.
-- Not bundled as an `.exe`. PyTorch makes a bundled build several GB; the
-  `.py` file plus auto-install of dependencies is the intended distribution.
-- Not cross-platform. The auto-install assumes Windows. The underlying
-  Python code is not Windows-specific and could plausibly run on macOS or
-  Linux with manual dependency setup, but is not tested there.
-- Not fast. A 24 MP image on CPU takes 10–30 seconds per model. If you
-  need speed, see the Tips section on GPU support.
 
 ## Credits
 
