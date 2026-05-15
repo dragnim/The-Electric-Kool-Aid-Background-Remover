@@ -12,6 +12,8 @@ carried through - ready for web, print, or further editing.
 Built for professional photography (300 DPI source material) where edge
 quality on hair, glasses, and complex backgrounds matters.
 
+![The Electric Kool-Aid Background Remover v3.8](assets/screenshot.png)
+
 ## What it does
 
 Pick a folder of images **or a single image**, pick a format, tick the
