@@ -21,8 +21,7 @@ your input.
 
 If you're not sure which model will work best on your material, tick
 several and compare the results side-by-side - each model gets its own
-output folder so they're easy to review. Once you've found the one you
-like, just tick that one on future runs.
+output folder so they're easy to review.
 
 Output is PNG, TIFF, or WebP (your choice). All three are lossless and
 preserve the source image's DPI metadata. TIFF uses LZW compression; WebP
