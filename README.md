@@ -1,6 +1,6 @@
 # The Electric Kool-Aid Background Remover
 
-**TL;DR:** A designer got fed up with remove.bg (expensive), Figma and Photoshop background removal (crap results), and the privacy and ethical concerns of uploading colleagues' photos to cloud AI services. So they built this. Drop your images in a folder, pick your models, click Run. Everything stays on your machine.
+**TL;DR:** A designer got fed up with remove.bg (expensive), Figma and Photoshop background removal (crap results), the privacy and ethical concerns of uploading colleagues' photos to cloud AI services, and messing around with command line tools every time they wanted to run a model. So they built this. Drop your images in a folder, pick your models, click Run. Everything stays on your machine.
 
 ---
 
