@@ -6,6 +6,8 @@
 
 ---
 
+## What is it?
+
 A free, local, privacy-respecting background remover for Windows. Runs
 entirely on your own machine - no cloud upload, no subscription, no
 images sent anywhere.
@@ -36,6 +38,23 @@ Output is PNG, TIFF, or WebP (your choice). All three are lossless and
 preserve the source image's DPI metadata. TIFF uses LZW compression; WebP
 files are typically 25–35% smaller than PNG. Existing outputs are skipped
 on re-runs, so interrupted batches can be safely resumed.
+
+## Why are there different models?
+
+No single AI model is best at everything. Some are better at fine details
+like hair and fur, some handle complex backgrounds better, some are tuned
+specifically for portraits. They've all been trained differently, on
+different datasets, with different goals.
+
+In practice this means one model might give you a clean cut on a headshot
+but leave a messy edge on a photo with flyaway hair, while another handles
+the hair perfectly but struggles with a busy background. There's no way to
+know in advance which will work best on your specific images - the only
+reliable way is to try a couple and compare.
+
+That's the whole point of this tool. Run two or three models on a
+representative photo, look at the results, pick the one you like, then
+use just that one for your full batch.
 
 ## Models included
 
