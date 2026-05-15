@@ -7,7 +7,7 @@ A single-file Tkinter app that runs background removal across multiple models
 labelled subfolders inside the chosen input location.
 
 To run:
-    py the-electric-kool-aid-background-remover-v3.7.1.py
+    py the-electric-kool-aid-background-remover.py
 
 On first launch the app will detect missing Python dependencies and offer to
 install them (rembg, BEN2 from GitHub, torch, opencv-python, Pillow).

@@ -63,7 +63,7 @@ Python installation and gives you a reproducible setup from pinned versions.
 py -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-py the-electric-kool-aid-background-remover-v3.7.1.py
+py the-electric-kool-aid-background-remover.py
 ```
 
 `requirements.txt` contains pinned versions from a known-working environment
@@ -77,12 +77,12 @@ If you just want to get going and aren't worried about dependency isolation:
    already have it. During install, tick "Add Python to PATH".
 2. Install Git from <https://git-scm.com/download/win> if you don't
    already have it. Use the default options.
-3. Download `the-electric-kool-aid-background-remover-v3.7.1.py` and put it
+3. Download `the-electric-kool-aid-background-remover.py` and put it
    anywhere convenient.
 4. Open a Command Prompt or PowerShell window in that folder and run:
 
    ```
-   py the-electric-kool-aid-background-remover-v3.7.1.py
+   py the-electric-kool-aid-background-remover.py
    ```
 
 5. On first launch the app detects missing Python packages (PyTorch, rembg,
@@ -137,7 +137,7 @@ installing it.
 
 **Install fails on a specific package.** Python 3.14 is bleeding-edge and
 the occasional ML library lags behind. Try installing Python 3.12 and
-running with `py -3.12 the-electric-kool-aid-background-remover-v3.7.1.py`.
+running with `py -3.12 the-electric-kool-aid-background-remover.py`.
 
 **"No images found."** The folder you picked has no files with a
 supported extension. Subfolders are not scanned — only the top level of

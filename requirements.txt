@@ -1,4 +1,4 @@
-# Requirements for The Electric Kool-Aid Background Remover v3.7
+# Requirements for The Electric Kool-Aid Background Remover v3.7.1
 # Generated from a known-working environment:
 #   Python 3.14.3 on Windows 11, AMD Ryzen 9 9950X3D, NVIDIA RTX 2080
 #   Last verified: May 2026
@@ -7,6 +7,9 @@
 #   py -m venv .venv
 #   .venv\Scripts\activate
 #   pip install -r requirements.txt
+#
+# Then run:
+#   py the-electric-kool-aid-background-remover.py
 #
 # Note: BEN2 is installed from GitHub, not PyPI. Git must be on PATH.
 # Note: torch is the CPU build. For GPU support, replace with the

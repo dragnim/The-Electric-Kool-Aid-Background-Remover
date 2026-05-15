@@ -183,8 +183,9 @@ before inclusion, since Dyalog's likely uses are commercial.
 
 ## File layout
 
-The whole app is one file, named with its version: `the-electric-kool-aid-background-remover-v{version}.py`
-(current: `the-electric-kool-aid-background-remover-v3.7.1.py`). There are no other runtime
+The whole app is one file: `the-electric-kool-aid-background-remover.py`.
+The version lives inside the file as `__version__` and in Git commit
+messages and tags — not in the filename. There are no other runtime
 assets. The earlier batch-processing scripts (`compare_bg_removal.py`,
 `compare_all_tiff.py`, etc.) remain in the user's working folder as a
 reference / fallback for headless runs.
@@ -196,14 +197,14 @@ Two documentation files sit alongside the app:
   potentially via GitHub. Assumes no prior context. Not versioned in the
   filename — a README always describes the current state of the repo.
 - `SPEC-v{version}.md` — developer/handover docs, versioned to match the
-  app (current: `SPEC-v3.7.1.md`). Context, decisions, conventions, caveats.
+  app (current: `SPEC.md`). Context, decisions, conventions, caveats.
   Written for the next developer (human or AI) picking up the codebase.
 
 The version string lives in a single `__version__` constant near the top of
 the app file; `APP_TITLE` is built from it, so the title bar always matches.
-Bumping a release means: edit `__version__`, rename the app file to match,
-rename `SPEC-v{old}.md` to `SPEC-v{new}.md`, update README.md and the new
-SPEC, add an entry to the version history below.
+Bumping a release means: edit `__version__`, update `README.md` and
+`SPEC.md`, add an entry to the version history below, and use the version
+number in the Git commit message.
 
 ## Conventions
 
@@ -223,7 +224,7 @@ SPEC, add an entry to the version history below.
 ## Run instructions for the user
 
 ```
-py the-electric-kool-aid-background-remover-v3.7.1.py
+py the-electric-kool-aid-background-remover.py
 ```
 
 On first run, the app will offer to install missing dependencies. After
@@ -275,7 +276,7 @@ Run.
 - **v3.3** — added BiRefNet-HR model (mapped to rembg's `birefnet-hrsod`
   weights — high-resolution variant of the BiRefNet architecture, MIT
   licensed); added a Copy button above the output log that writes the
-  entire log to the clipboard; SPEC filename now versioned (`SPEC-v3.3.md`)
+  entire log to the clipboard; SPEC filename now versioned (`SPEC.md`)
   per the standing convention.
 - **v3.2** — file renamed to `Kool-Aid-Background-Remover-v{version}.py`;
   `__version__` constant introduced and surfaced in the title bar so the
