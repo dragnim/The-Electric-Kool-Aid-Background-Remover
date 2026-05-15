@@ -21,7 +21,8 @@ your input.
 
 If you're not sure which model will work best on your material, tick
 several and compare the results side-by-side - each model gets its own
-output folder so they're easy to review.
+output folder so they're easy to review. Once you've found the one you
+like, just tick that one on future runs.
 
 Output is PNG, TIFF, or WebP (your choice). All three are lossless and
 preserve the source image's DPI metadata. TIFF uses LZW compression; WebP
@@ -199,20 +200,15 @@ details on each model.
 
 > **100% Prime AI Slop** 🍋
 >
-> This tool - every line of code, every comment, every doc, every design
-> decision, the version-numbering scheme, the choice of models, the WebP
-> canvas-limit validation, the lemon icon, this very sentence - was written
-> entirely by [Claude](https://claude.ai) (Anthropic), with a human
-> providing direction, feedback, and the occasional "that's rubbish, try
-> again."
+> This tool - every line of code, every comment, and every doc - was
+> written entirely by [Claude](https://claude.ai) (Anthropic). The design
+> decisions were the human's: what the tool needed to do, which models to
+> include, the privacy framing, the output formats, when to stop adding
+> features, and the name. The human's other contributions were knowing what
+> they wanted, asking good questions, and the occasional "that's rubbish,
+> try again."
 >
-> The one exception: the name. **The Electric Kool-Aid Background Remover**
-> was coined by the human. Credit where it's due.
->
-> No code was written by hand. No docs were written by hand. The human's
-> contribution was knowing what they wanted, asking good questions, pushing
-> back when Claude got it wrong (which happened), and coming up with a
-> genuinely good name. We are leaning into this fully and without shame.
-> Vibe coding is real, it works, and this is what it looks like when you
-> don't pretend otherwise. If you find a bug, Claude probably wrote it.
-> If you like it, Claude probably wrote that too. Except the name.
+> No code was written by hand. No docs were written by hand. Vibe coding
+> is real, it works, and this is what it looks like when you don't pretend
+> otherwise. If you find a bug, Claude probably wrote it. If you like it,
+> the human probably decided it should exist.
