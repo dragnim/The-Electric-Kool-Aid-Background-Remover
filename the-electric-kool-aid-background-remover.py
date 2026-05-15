@@ -620,7 +620,7 @@ class App(tk.Tk):
 
 # --- Embedded window icon ----------------------------------------------------
 # Multi-resolution Windows .ico for the title bar and taskbar. Base64 of a
-# 96x97 lemon graphic from the Dyalog assets. ~38 KB raw / ~51 KB encoded.
+# 96x97 lemon graphic (Twemoji, CC BY 4.0). ~38 KB raw / ~51 KB encoded.
 # Kept at the bottom of the file so it doesn't dominate the constants block.
 
 LEMON_ICO_B64 = (
