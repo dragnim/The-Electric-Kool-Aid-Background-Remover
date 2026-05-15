@@ -165,6 +165,14 @@ Either pick PNG or TIFF, or remove/downscale the listed images.
 
 - Not a web service. Everything runs locally; nothing is uploaded anywhere.
   This is the point.
+- Not a compression tool. All output formats are configured for maximum
+  quality and lossless encoding. PNG and TIFF are inherently lossless.
+  WebP output also uses lossless mode — the files are smaller than PNG
+  due to better compression, not because quality has been sacrificed.
+  None of the outputs are "web-optimised" in the sense of being compressed
+  for fast page loads; they are full-quality cutouts intended for further
+  use in design, print, or web pipelines where you control the final
+  compression step.
 - Not bundled as an `.exe`. PyTorch makes a bundled build several GB; the
   `.py` file plus auto-install of dependencies is the intended distribution.
 - Not cross-platform. The auto-install assumes Windows. The underlying
