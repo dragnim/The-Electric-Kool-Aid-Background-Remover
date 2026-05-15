@@ -2,6 +2,8 @@
 
 **TL;DR:** A designer got fed up with remove.bg (expensive), Figma and Photoshop background removal (crap results), the privacy and ethical concerns of uploading colleagues' photos to cloud AI services, and messing around with command line tools every time they wanted to run a model. So they built this. Drop your images in a folder, pick your models, click Run. Everything stays on your machine.
 
+**No idea what any of this means?** Download [GET-AI-HELP.md](GET-AI-HELP.md), paste it into [Claude](https://claude.ai) or ChatGPT, and ask your question. It contains everything an AI needs to walk you through installation and usage from scratch.
+
 ---
 
 A free, local, privacy-respecting background remover for Windows. Runs
