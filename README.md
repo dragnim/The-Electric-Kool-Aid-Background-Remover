@@ -1,6 +1,6 @@
 # The Electric Kool-Aid Background Remover
 
-**TL;DR:** A designer got fed up with remove.bg (expensive), Figma and Photoshop background removal (crap results), the privacy and ethical concerns of uploading colleagues' photos to cloud AI services, and messing around with command line tools every time they wanted to run a model. So they built this. Drop your images in a folder, pick your models, click Run. Everything stays on your machine.
+**TL;DR:** A designer got fed up with remove.bg (expensive), Figma and Photoshop background removal (crap results), the privacy and ethical concerns of uploading colleagues' photos to cloud AI services, and messing around with command line tools every time they JUST WANTED TO REMOVE A BACKGROUND. So they built this. Drop your images in a folder, pick your models, click Run. Everything stays on your machine.
 
 **No idea what any of the technical stuff below means?** Download [GET-AI-HELP.md](GET-AI-HELP.md), paste it into [Claude](https://claude.ai) or ChatGPT, and ask your question. It contains everything an AI needs to walk you through installation and usage from scratch.
 
@@ -28,11 +28,6 @@ Pick a folder of images **or a single image**, pick a format, tick the
 model(s) you want to use, and hit Run. The app removes the background from
 every image and saves transparent cutouts into labelled subfolders next to
 your input.
-
-If you're not sure which model will work best on your material, tick
-several and compare the results side-by-side - each model gets its own
-output folder so they're easy to review. Once you've found the one you
-like, just tick that one on future runs.
 
 Output is PNG, TIFF, or WebP (your choice). All three are lossless and
 preserve the source image's DPI metadata. TIFF uses LZW compression; WebP
