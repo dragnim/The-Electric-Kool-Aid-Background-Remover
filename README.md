@@ -1,5 +1,9 @@
 # The Electric Kool-Aid Background Remover
 
+**TL;DR:** A designer got fed up with remove.bg (expensive), Figma and Photoshop background removal (crap results), and the privacy and ethical concerns of uploading colleagues' photos to cloud AI services. So they built this. Drop your images in a folder, pick your models, click Run. Everything stays on your machine.
+
+---
+
 A free, local, privacy-respecting background remover for Windows. Runs
 entirely on your own machine - no cloud upload, no subscription, no
 images sent anywhere.
