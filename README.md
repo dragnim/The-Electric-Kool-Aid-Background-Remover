@@ -170,7 +170,38 @@ self-identifying even if you move them out of their folders.
   scans or panoramas), the app will refuse to start a WebP run and list
   the oversized files. Pick PNG or TIFF instead, or downscale the input.
 
-## Troubleshooting
+## Large batches
+
+The tool handles large batches fine — there's no hard limit on the number
+of images. A few things worth knowing if you're processing hundreds of
+images:
+
+**It's slow on CPU.** Expect roughly 10–30 seconds per image per model.
+1000 images through two models is somewhere around 6–10 hours. If you
+have an NVIDIA GPU it drops to 1–3 seconds per image, which makes large
+batches much more practical.
+
+**You can always resume.** If the run is interrupted for any reason —
+crash, power cut, Windows deciding to restart — just run it again on the
+same folder. Any image that already has output in the destination folder
+will be skipped. You won't lose progress.
+
+**Split large jobs into smaller batches.** Rather than running 1000 images
+in one go, consider splitting into batches of 200–300. Shorter runs are
+easier to manage, easier to check, and if something goes wrong you lose
+less progress before the next resume point.
+
+**The log gets long.** The output log in the app will have thousands of
+lines by the end of a big run. It stays functional but may get slightly
+sluggish on very large batches. Use the **Copy Output** button to grab
+the full log if you need to review it.
+
+**Models are loaded once.** The AI models are loaded into memory at the
+start of a run and reused for every image — you don't pay the loading
+cost per image. This is the right behaviour for large batches and means
+memory usage stays stable throughout the run.
+
+
 
 **"Git is not recognized…" during install.** Git isn't on your PATH.
 Reinstall Git with the default options, or open a fresh terminal after
