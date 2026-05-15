@@ -244,6 +244,12 @@ or every image failed. Check the log for `FAILED` lines.
 16383px on either axis. The dialog lists which images are over the limit.
 Either pick PNG or TIFF, or remove/downscale the listed images.
 
+**Still stuck?** Download [GET-AI-HELP.md](GET-AI-HELP.md) from the repo,
+paste it into [Claude](https://claude.ai), ChatGPT, or any other AI
+assistant, then describe your problem. The file gives the AI everything
+it needs to help you - your error message, your Python version, and what
+you were trying to do is usually enough for it to walk you through a fix.
+
 ## Credits
 
 Window icon: lemon graphic from [Twemoji](https://github.com/twitter/twemoji),
