@@ -1,13 +1,13 @@
 # The Electric Kool-Aid Background Remover
 
 A free, local, privacy-respecting background remover for Windows. Runs
-entirely on your own machine — no cloud upload, no subscription, no
+entirely on your own machine - no cloud upload, no subscription, no
 images sent anywhere.
 
 Supports batch processing of whole folders or single images, with a choice
 of six AI models so you can find the one that works best on your material.
 Output is PNG, TIFF, or WebP with transparency preserved and DPI metadata
-carried through — ready for web, print, or further editing.
+carried through - ready for web, print, or further editing.
 
 Built for professional photography (300 DPI source material) where edge
 quality on hair, glasses, and complex backgrounds matters.
@@ -20,7 +20,7 @@ every image and saves transparent cutouts into labelled subfolders next to
 your input.
 
 If you're not sure which model will work best on your material, tick
-several and compare the results side-by-side — each model gets its own
+several and compare the results side-by-side - each model gets its own
 output folder so they're easy to review. Once you've found the one you
 like, just tick that one on future runs.
 
@@ -34,18 +34,18 @@ on re-runs, so interrupted batches can be safely resumed.
 All bundled models are permissively licensed (MIT) and suitable for
 commercial use.
 
-- **BEN2** — strong on fine edges like hair; good default for portrait or
+- **BEN2** - strong on fine edges like hair; good default for portrait or
   product photography.
-- **BiRefNet-General** — reliable general-purpose model; the safe default
+- **BiRefNet-General** - reliable general-purpose model; the safe default
   for mixed subject matter.
-- **BiRefNet-HR** — high-resolution variant. Worth trying on large
+- **BiRefNet-HR** - high-resolution variant. Worth trying on large
   source images (e.g. 24 MP professional photography) where General can
   soften fine edges.
-- **BiRefNet-Portrait** — tuned specifically for single-person portraits.
+- **BiRefNet-Portrait** - tuned specifically for single-person portraits.
   Can behave unpredictably on group photos or non-human subjects.
-- **BiRefNet-Massive** — same architecture as General, trained on more
+- **BiRefNet-Massive** - same architecture as General, trained on more
   data. Often slightly better quality at higher compute cost.
-- **BiRefNet-Lite** — faster, lower-memory variant of General. Slightly
+- **BiRefNet-Lite** - faster, lower-memory variant of General. Slightly
   lower quality; useful for quick passes or weaker hardware.
 
 BEN2 and BiRefNet-General are selected by default. Tick others as needed
@@ -127,13 +127,13 @@ self-identifying even if you move them out of their folders.
   (300 MB – 1 GB depending on model). Subsequent runs reuse the cached
   weights and start quickly.
 - **GPU acceleration:** if you have an NVIDIA GPU and CUDA-enabled PyTorch,
-  the tool will use it automatically — no configuration needed. Processing
+  the tool will use it automatically - no configuration needed. Processing
   time drops from 10–30 seconds per image to 1–3 seconds.
 - To find the best model for your material, tick several on a representative
   image and compare the results. Once you know which works best, tick only
   that one for your main batch run.
 - The **Copy Output** button above the output log copies the entire run
-  log to your clipboard — useful for sharing timing data or error messages.
+  log to your clipboard - useful for sharing timing data or error messages.
 - WebP has a hard 16383px-per-axis size limit. If your source images are
   larger than that on either axis (rare, but possible with very large
   scans or panoramas), the app will refuse to start a WebP run and list
@@ -150,7 +150,7 @@ the occasional ML library lags behind. Try installing Python 3.12 and
 running with `py -3.12 the-electric-kool-aid-background-remover.py`.
 
 **"No images found."** The folder you picked has no files with a
-supported extension. Subfolders are not scanned — only the top level of
+supported extension. Subfolders are not scanned - only the top level of
 the folder.
 
 **Output folder for a model is empty.** That model produced no new
@@ -167,7 +167,7 @@ Either pick PNG or TIFF, or remove/downscale the listed images.
   This is the point.
 - Not a compression tool. All output formats are configured for maximum
   quality and lossless encoding. PNG and TIFF are inherently lossless.
-  WebP output also uses lossless mode — the files are smaller than PNG
+  WebP output also uses lossless mode - the files are smaller than PNG
   due to better compression, not because quality has been sacrificed.
   None of the outputs are "web-optimised" in the sense of being compressed
   for fast page loads; they are full-quality cutouts intended for further
@@ -190,7 +190,7 @@ multi-resolution `.ico` via [favicon.io](https://favicon.io/emoji-favicons/lemon
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).
 
 The models bundled with this tool are also MIT-licensed and free for
 commercial use. See [MODEL-LICENCES.md](MODEL-LICENCES.md) for the full
@@ -200,9 +200,9 @@ details on each model.
 
 > **100% Prime AI Slop** 🍋
 >
-> This tool — every line of code, every comment, every doc, every design
+> This tool - every line of code, every comment, every doc, every design
 > decision, the version-numbering scheme, the choice of models, the WebP
-> canvas-limit validation, the lemon icon, this very sentence — was written
+> canvas-limit validation, the lemon icon, this very sentence - was written
 > entirely by [Claude](https://claude.ai) (Anthropic), with a human
 > providing direction, feedback, and the occasional "that's rubbish, try
 > again."

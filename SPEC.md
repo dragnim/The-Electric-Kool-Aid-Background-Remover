@@ -1,12 +1,12 @@
-# The Electric Kool-Aid Background Remover — Project Brief
+# The Electric Kool-Aid Background Remover - Project Brief
 
 A portable Windows desktop tool for comparing background-removal models
 across a folder of images. Built for internal use at Dyalog, primarily to
 process staff photography. This brief is intended to bring another Claude
 instance up to speed on context, decisions, and conventions.
 
-**Provenance:** this entire project — application code, documentation,
-design decisions, and this SPEC — was written by Claude (Anthropic) across
+**Provenance:** this entire project - application code, documentation,
+design decisions, and this SPEC - was written by Claude (Anthropic) across
 multiple conversations, directed by a human user. The one exception is the
 name, which the human came up with. No code or docs were written by hand.
 If you are a future Claude instance reading this: yes, you wrote most of
@@ -18,13 +18,13 @@ A single user (the developer) on a high-spec Windows workstation:
 
 - Windows 11 Pro
 - AMD Ryzen 9 9950X3D (16C/32T), 64 GB RAM
-- NVIDIA RTX 2080 (Turing, 8 GB) — present but workflow targets CPU
+- NVIDIA RTX 2080 (Turing, 8 GB) - present but workflow targets CPU
 - Python 3.14 (currently the only Python installed); PyTorch wheels confirmed
   working on 3.14 as of May 2026
 - Git installed and on PATH (required for installing BEN2)
 
 The user is technically literate, comfortable with CLIs but prefers a small
-GUI for repeated batch operations. They do not care about per-image speed —
+GUI for repeated batch operations. They do not care about per-image speed  - 
 they care about output quality and being able to A/B test models on real
 content.
 
@@ -42,13 +42,13 @@ models and writes outputs to labelled sibling folders for easy comparison.
 
 ## Functional requirements
 
-1. **Input** — a folder of images OR a single image, chosen via separate
+1. **Input** - a folder of images OR a single image, chosen via separate
    pickers (Folder… / Image…). Supported extensions: `.jpg .jpeg .png
    .webp .tif .tiff .bmp`. Error if the selected folder contains no
    supported images, or if a chosen file isn't a supported type. When a
    single image is chosen, output folders are still created as siblings
    inside the image's parent directory.
-2. **Format** — choose between `PNG`, `TIFF`, or `WebP` via a dropdown.
+2. **Format** - choose between `PNG`, `TIFF`, or `WebP` via a dropdown.
    TIFF uses lossless LZW compression. WebP uses lossless mode at quality
    100. All three formats preserve transparency (alpha channel) and carry
    the source image's DPI metadata through to the output (default 300 if
@@ -56,17 +56,17 @@ models and writes outputs to labelled sibling folders for easy comparison.
    baked into the format; the app validates this upfront and refuses to
    start a run if any input image exceeds it (listing the offending
    images so the user can fix the input or pick a different format).
-3. **Models** — multi-select from (BEN2 and BiRefNet-General default on; the
+3. **Models** - multi-select from (BEN2 and BiRefNet-General default on; the
    rest default off):
    - **BEN2** (PramaLLC, MIT-licensed, installed from GitHub)
    - **BiRefNet-General** (via `rembg`)
-   - **BiRefNet-HR** (via `rembg`, mapped to the `birefnet-hrsod` weights —
+   - **BiRefNet-HR** (via `rembg`, mapped to the `birefnet-hrsod` weights  - 
      high-resolution variant of the architecture)
    - **BiRefNet-Portrait** (via `rembg`)
    - **BiRefNet-Massive** (via `rembg`)
    - **BiRefNet-Lite** (via `rembg`)
    See the model table below for details and licence notes.
-4. **Output** — for each selected model, a subfolder is created **inside the
+4. **Output** - for each selected model, a subfolder is created **inside the
    input folder** with the name `{ModelName}-{FORMAT}`, e.g.:
    - `BEN2-PNG`
    - `BiRefNet-General-TIFF`
@@ -74,9 +74,9 @@ models and writes outputs to labelled sibling folders for easy comparison.
    Output filenames preserve the input stem and use the format's extension.
    Folders are created lazily on first write, so models that produced no new
    output (e.g. everything was already skipped) leave no empty folder behind.
-5. **Skip-existing** — re-runs skip images whose output already exists, so
+5. **Skip-existing** - re-runs skip images whose output already exists, so
    crashes/interrupts can be resumed safely.
-6. **Auto-install** — missing Python dependencies are detected on startup
+6. **Auto-install** - missing Python dependencies are detected on startup
    and offered for `pip install` (with user confirmation). Install output
    streams to the in-app log.
 
@@ -91,7 +91,7 @@ models and writes outputs to labelled sibling folders for easy comparison.
 - Cross-platform. Targeting Windows only.
 - Image preview/comparison UI. Output folders are inspected externally.
 
-## Models — quick reference
+## Models - quick reference
 
 | Display name        | Backend | Model identifier         | Default | Notes                                      |
 |---------------------|---------|--------------------------|---------|---------------------------------------------|
@@ -115,34 +115,34 @@ before inclusion, since Dyalog's likely uses are commercial.
 ## Technical decisions
 
 - **Tkinter / ttk** for the GUI. Stdlib-only, no extra dep, looks native enough.
-- **Threading** — dependency install and image processing run on background
+- **Threading** - dependency install and image processing run on background
   threads; UI updates marshalled via `self.after(0, ...)`.
-- **DPI passthrough** — `src.info.get("dpi", (300, 300))` is read per-image
+- **DPI passthrough** - `src.info.get("dpi", (300, 300))` is read per-image
   inside a `with Image.open(path) as src:` block (the context manager
   releases the file handle promptly, which matters on Windows for large
   batches) and passed to `Image.save(..., dpi=dpi)`. PNG and TIFF both
   support the tag.
-- **TIFF compression** — `tiff_lzw` is lossless, supported everywhere, keeps
+- **TIFF compression** - `tiff_lzw` is lossless, supported everywhere, keeps
   file sizes in the 30–80 MB range per image at 24 MP rather than 100+ MB
   uncompressed.
-- **WebP encoding** — `format="WEBP", lossless=True, quality=100`. `quality`
+- **WebP encoding** - `format="WEBP", lossless=True, quality=100`. `quality`
   in WebP's lossless mode tunes the encoder's compression effort (not
   visual quality, which is bit-perfect at lossless); 100 = best compression.
   Pillow handles WebP natively, no extra dependency. Typical file sizes
   are 25–35% smaller than PNG. The 16383px-per-axis ceiling is a hard
   limit baked into the WebP container.
-- **Progress indication** — an indeterminate `ttk.Progressbar` runs while
+- **Progress indication** - an indeterminate `ttk.Progressbar` runs while
   processing (visual liveness) and the status bar text cycles through a
   dots animation appended to a base message ("Image 3/12 – BEN2", etc.).
   Both stop together when the run finishes or errors. Implemented via
   `self.after()` calls so the main thread stays responsive while the
   worker thread updates the base message.
-- **Window icon** — embedded as a base64 ICO constant (`LEMON_ICO_B64`,
+- **Window icon** - embedded as a base64 ICO constant (`LEMON_ICO_B64`,
   at the bottom of the file to keep it out of the way). On startup the
   bytes are written to a temp file via `tempfile.mkstemp(suffix=".ico")`
   and `iconbitmap(default=path)` is called. The .ico is a true
   multi-resolution Windows icon containing 16, 32, and 48 pixel renders
-  each drawn separately at the right size — Windows picks the
+  each drawn separately at the right size - Windows picks the
   appropriate one for the title bar, taskbar, and Alt-Tab. An `atexit`
   handler removes the temp file on exit. Single-file convention preserved
   (no external .ico to ship).
@@ -152,16 +152,16 @@ before inclusion, since Dyalog's likely uses are commercial.
   switched to iconbitmap + embedded ICO, but the source .ico was a single
   96×97 image wrapped in an ICO container, so Windows still had to scale
   it down and got the same blank result. v3.6 uses a true multi-res .ico
-  with native 16/32/48 renders — that's the correct shape of input for
+  with native 16/32/48 renders - that's the correct shape of input for
   Windows iconbitmap.
 
   **Attribution:** the lemon icon is CC BY 4.0 licensed; credit must
   appear in README.md (see Credits section there).
-- **BEN2 install via Git URL** — BEN2 isn't on PyPI as `ben2`. The pip target
+- **BEN2 install via Git URL** - BEN2 isn't on PyPI as `ben2`. The pip target
   is `git+https://github.com/PramaLLC/BEN2.git`. This requires Git on PATH.
   BEN2 also imports `cv2` (OpenCV) without listing it as a dependency, so
   `opencv-python` is installed alongside.
-- **Sessions loaded once** — rembg sessions and the BEN2 model are
+- **Sessions loaded once** - rembg sessions and the BEN2 model are
   instantiated once at the start of a run and reused across all images.
 
 ## Known issues / caveats
@@ -185,17 +185,17 @@ before inclusion, since Dyalog's likely uses are commercial.
 
 The whole app is one file: `the-electric-kool-aid-background-remover.py`.
 The version lives inside the file as `__version__` and in Git commit
-messages and tags — not in the filename. There are no other runtime
+messages and tags - not in the filename. There are no other runtime
 assets. The earlier batch-processing scripts (`compare_bg_removal.py`,
 `compare_all_tiff.py`, etc.) remain in the user's working folder as a
 reference / fallback for headless runs.
 
 Two documentation files sit alongside the app:
 
-- `README.md` — user-facing docs (what it does, how to install, how to
+- `README.md` - user-facing docs (what it does, how to install, how to
   use, troubleshooting). Written for someone arriving at the project cold,
   potentially via GitHub. Assumes no prior context.
-- `SPEC.md` — developer/handover docs. Context, decisions, conventions,
+- `SPEC.md` - developer/handover docs. Context, decisions, conventions,
   caveats. Written for the next developer (human or AI) picking up the
   codebase.
 
@@ -215,7 +215,7 @@ number in the Git commit message.
   the filename means files remain self-identifying even when moved out of
   their folder.
 - All output folders are siblings inside the input folder, not in a separate
-  location. This keeps a run self-contained — copy the input folder
+  location. This keeps a run self-contained - copy the input folder
   somewhere and all outputs go with it.
 - All log lines are written to a single `ScrolledText` widget; status bar
   shows current high-level state.
@@ -232,14 +232,14 @@ Run.
 
 ## Version history
 
-- **v3.7.1** — patch: `REQUIRED_DEPS` auto-install targets now pinned to
+- **v3.7.1** - patch: `REQUIRED_DEPS` auto-install targets now pinned to
   match `requirements.txt` (previously unpinned, so quick-start and venv
   routes could diverge); Python version requirement corrected to 3.12+ in
   docstring (was 3.10+, inconsistent with README); README install section
   reordered so venv route is presented first and explicitly labelled
   "Recommended for most users", quick-start labelled as the casual/own-machine
   route.
-- **v3.7** — Cancel button stops the run cleanly after the current image
+- **v3.7** - Cancel button stops the run cleanly after the current image
   finishes (sets a flag checked at the top of each image loop iteration);
   Open Output Folder button opens the input directory in Explorer after a
   run completes; `requirements.txt` added with pinned versions from a
@@ -248,22 +248,22 @@ Run.
   date; AI Slop disclaimer moved from top of README to a Provenance section
   at the bottom per reviewer feedback (the joke works, it just shouldn't
   be the first thing a non-technical stakeholder sees).
-- **v3.6** — window icon properly working at last. Replaced the embedded
+- **v3.6** - window icon properly working at last. Replaced the embedded
   .ico with a true multi-resolution version (16/32/48 px renders, each
   drawn at native size). Previous .ico in v3.5 was a single 96×97 image
-  wrapped in ICO container format — Windows had to scale it down to 16
+  wrapped in ICO container format - Windows had to scale it down to 16
   for the title bar and the visible content collapsed to nothing. New
   icon is CC BY 4.0 licensed; attribution lives in README.md. Source
   file shrank from ~80 KB / 1300 lines to ~50 KB / 880 lines because
   the new ICO is smaller despite being multi-res.
-- **v3.5** — window icon fixed. Previous (v3.4) approach used an embedded
+- **v3.5** - window icon fixed. Previous (v3.4) approach used an embedded
   PNG via `iconphoto()`, which on Windows reserved title-bar space for an
   icon but rendered as blank (96×97 RGBA scaled down to 16px lost the
   visible shape). Replaced with an embedded multi-resolution .ico file
   written to a temp path on startup and applied via `iconbitmap()`. Adds
   ~51 KB of base64 to the source file; that's the cost of a working icon
   on Windows. Single-file convention preserved.
-- **v3.4** — added WebP as an output format alongside PNG and TIFF
+- **v3.4** - added WebP as an output format alongside PNG and TIFF
   (lossless, dpi-preserving, ~30% smaller files), with upfront validation
   against WebP's 16383px-per-axis canvas limit; format picker changed
   from radio buttons to a dropdown with inline description text; input
@@ -272,20 +272,20 @@ Run.
   dots-animated status message ("Image 3/12 – BEN2…") so the app shows
   liveness during long inference runs; Copy button renamed to "Copy
   Output"; window icon set from an embedded base64 PNG (a lemon).
-- **v3.3** — added BiRefNet-HR model (mapped to rembg's `birefnet-hrsod`
-  weights — high-resolution variant of the BiRefNet architecture, MIT
+- **v3.3** - added BiRefNet-HR model (mapped to rembg's `birefnet-hrsod`
+  weights - high-resolution variant of the BiRefNet architecture, MIT
   licensed); added a Copy button above the output log that writes the
   entire log to the clipboard. At the time, the SPEC filename was versioned
   (e.g. `SPEC-v3.3.md`); this convention was later dropped in favour of a
   single `SPEC.md`.
-- **v3.2** — file renamed to `Kool-Aid-Background-Remover-v{version}.py`;
+- **v3.2** - file renamed to `Kool-Aid-Background-Remover-v{version}.py`;
   `__version__` constant introduced and surfaced in the title bar so the
   window identifies which build is running. No behavioural changes.
-- **v3.1** — `Image.open` wrapped in a context manager (releases file
+- **v3.1** - `Image.open` wrapped in a context manager (releases file
   handles promptly on Windows); output folders created lazily on first
   write so unused model folders no longer get left behind; docstring and
   this spec brought back in sync with the actual five-model lineup.
-- **v3** — current five-model lineup (BEN2, BiRefNet General / Portrait /
+- **v3** - current five-model lineup (BEN2, BiRefNet General / Portrait /
   Massive / Lite); Tkinter GUI with auto-install of missing deps.
-- **v2, v1** — earlier iterations (headless batch scripts kept as fallback
+- **v2, v1** - earlier iterations (headless batch scripts kept as fallback
   in the working folder; see "File layout").
