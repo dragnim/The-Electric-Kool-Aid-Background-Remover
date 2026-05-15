@@ -40,18 +40,18 @@ on re-runs, so interrupted batches can be safely resumed.
 All bundled models are permissively licensed (MIT) and suitable for
 commercial use.
 
-- **BEN2** - strong on fine edges like hair; good default for portrait or
+- **[BEN2](https://github.com/PramaLLC/BEN2)** - strong on fine edges like hair; good default for portrait or
   product photography.
-- **BiRefNet-General** - reliable general-purpose model; the safe default
+- **[BiRefNet-General](https://huggingface.co/ZhengPeng7/BiRefNet)** - reliable general-purpose model; the safe default
   for mixed subject matter.
-- **BiRefNet-HR** - high-resolution variant. Worth trying on large
+- **[BiRefNet-HR](https://huggingface.co/ZhengPeng7/BiRefNet-HRSOD-DHU)** - high-resolution variant. Worth trying on large
   source images (e.g. 24 MP professional photography) where General can
   soften fine edges.
-- **BiRefNet-Portrait** - tuned specifically for single-person portraits.
+- **[BiRefNet-Portrait](https://huggingface.co/ZhengPeng7/BiRefNet-portrait)** - tuned specifically for single-person portraits.
   Can behave unpredictably on group photos or non-human subjects.
-- **BiRefNet-Massive** - same architecture as General, trained on more
+- **[BiRefNet-Massive](https://huggingface.co/ZhengPeng7/BiRefNet_massive)** - same architecture as General, trained on more
   data. Often slightly better quality at higher compute cost.
-- **BiRefNet-Lite** - faster, lower-memory variant of General. Slightly
+- **[BiRefNet-Lite](https://huggingface.co/ZhengPeng7/BiRefNet-lite)** - faster, lower-memory variant of General. Slightly
   lower quality; useful for quick passes or weaker hardware.
 
 BEN2 and BiRefNet-General are selected by default. Tick others as needed
