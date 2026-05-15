@@ -52,9 +52,7 @@ the hair perfectly but struggles with a busy background. There's no way to
 know in advance which will work best on your specific images - the only
 reliable way is to try a couple and compare.
 
-That's the whole point of this tool. Run two or three models on a
-representative photo, look at the results, pick the one you like, then
-use just that one for your full batch.
+That's the whole point of this tool. Run several models on a photo, look at the results side by side, and pick the one that worked best for that image. You may find that different photos need different models - a portrait with simple hair might look best with BiRefNet-General, while a shot with complex flyaway hair might need BEN2. There's no single right answer, and that's fine.
 
 ## Models included
 
