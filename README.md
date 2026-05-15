@@ -1,19 +1,28 @@
 # The Electric Kool-Aid Background Remover
 
-A small Windows desktop tool that runs a folder of images through one or
-more AI background-removal models and saves transparent-background cutouts
-into labelled output folders, so you can compare results side-by-side.
+A free, local, privacy-respecting background remover for Windows. Runs
+entirely on your own machine — no cloud upload, no subscription, no
+images sent anywhere.
 
-Built for processing professional photography (300 DPI source material)
-where edge quality on hair, glasses, and complex backgrounds matters more
-than per-image speed.
+Supports batch processing of whole folders or single images, with a choice
+of six AI models so you can find the one that works best on your material.
+Output is PNG, TIFF, or WebP with transparency preserved and DPI metadata
+carried through — ready for web, print, or further editing.
+
+Built for professional photography (300 DPI source material) where edge
+quality on hair, glasses, and complex backgrounds matters.
 
 ## What it does
 
-Pick a folder of images **or a single image**, tick the models you want
-to try, hit Run. For each model you selected, the tool creates a sibling
-subfolder inside your input location and writes a transparent-background
-cutout of every image into it.
+Pick a folder of images **or a single image**, pick a format, tick the
+model(s) you want to use, and hit Run. The app removes the background from
+every image and saves transparent cutouts into labelled subfolders next to
+your input.
+
+If you're not sure which model will work best on your material, tick
+several and compare the results side-by-side — each model gets its own
+output folder so they're easy to review. Once you've found the one you
+like, just tick that one on future runs.
 
 Output is PNG, TIFF, or WebP (your choice). All three are lossless and
 preserve the source image's DPI metadata. TIFF uses LZW compression; WebP
@@ -116,12 +125,13 @@ self-identifying even if you move them out of their folders.
 
 - The first time you run a given model, its weights are downloaded
   (300 MB – 1 GB depending on model). Subsequent runs reuse the cached
-  weights.
-- Speed is not a priority for this tool. A 24 MP image on CPU takes
-  10–30 seconds per model. If you have an NVIDIA GPU and CUDA-enabled
-  PyTorch, the tool will use it automatically and run much faster.
-- To compare two models on the same image, just tick both before running
-  and look at the matching files in their respective output folders.
+  weights and start quickly.
+- **GPU acceleration:** if you have an NVIDIA GPU and CUDA-enabled PyTorch,
+  the tool will use it automatically — no configuration needed. Processing
+  time drops from 10–30 seconds per image to 1–3 seconds.
+- To find the best model for your material, tick several on a representative
+  image and compare the results. Once you know which works best, tick only
+  that one for your main batch run.
 - The **Copy Output** button above the output log copies the entire run
   log to your clipboard — useful for sharing timing data or error messages.
 - WebP has a hard 16383px-per-axis size limit. If your source images are
@@ -153,13 +163,15 @@ Either pick PNG or TIFF, or remove/downscale the listed images.
 
 ## What this tool is not
 
-- Not a one-shot background remover. It's built for batch A/B testing
-  models on a folder of similar images.
+- Not a web service. Everything runs locally; nothing is uploaded anywhere.
+  This is the point.
 - Not bundled as an `.exe`. PyTorch makes a bundled build several GB; the
   `.py` file plus auto-install of dependencies is the intended distribution.
 - Not cross-platform. The auto-install assumes Windows. The underlying
   Python code is not Windows-specific and could plausibly run on macOS or
   Linux with manual dependency setup, but is not tested there.
+- Not fast. A 24 MP image on CPU takes 10–30 seconds per model. If you
+  need speed, see the Tips section on GPU support.
 
 ## Credits
 
