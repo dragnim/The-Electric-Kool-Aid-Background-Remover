@@ -1,0 +1,179 @@
+# The Electric Kool-Aid Background Remover
+
+> **⚠️ 100% Prime AI Slop**
+>
+> This tool — every line of code, every comment, every doc, every design
+> decision, the version-numbering scheme, the choice of models, the WebP
+> canvas-limit validation, the lemon icon, this very sentence — was written
+> entirely by [Claude](https://claude.ai) (Anthropic), with a human
+> providing direction, feedback, and the occasional "that's rubbish, try
+> again."
+>
+> The one exception: the name. **The Electric Kool-Aid Background Remover**
+> was coined by the human. Credit where it's due.
+>
+> No code was written by hand. No docs were written by hand. The human's
+> contribution was knowing what they wanted, asking good questions, pushing
+> back when Claude got it wrong (which happened), and coming up with a
+> genuinely good name. We are leaning into this fully and without shame.
+> Vibe coding is real, it works, and this is what it looks like when you
+> don't pretend otherwise. If you find a bug, Claude probably wrote it.
+> If you like it, Claude probably wrote that too. Except the name.
+
+---
+
+A small Windows desktop tool that runs a folder of images through one or
+more AI background-removal models and saves transparent-background cutouts
+into labelled output folders, so you can compare model results
+side-by-side.
+
+Built for processing professional photography (300 DPI source material)
+where edge quality on hair, glasses, and complex backgrounds matters more
+than per-image speed.
+
+## What it does
+
+Pick a folder of images **or a single image**, tick the models you want
+to try, hit Run. For each model you selected, the tool creates a sibling
+subfolder inside your input location and writes a transparent-background
+cutout of every image into it.
+
+Output is PNG, TIFF, or WebP (your choice). All three are lossless and
+preserve the source image's DPI metadata. TIFF uses LZW compression; WebP
+files are typically 25–35% smaller than PNG. Existing outputs are skipped
+on re-runs, so interrupted batches can be safely resumed.
+
+## Models included
+
+All bundled models are permissively licensed (MIT) and suitable for
+commercial use.
+
+- **BEN2** — strong on fine edges like hair; good default for portrait or
+  product photography.
+- **BiRefNet-General** — reliable general-purpose model; the safe default
+  for mixed subject matter.
+- **BiRefNet-HR** — high-resolution variant. Worth trying on large
+  source images (e.g. 24 MP professional photography) where General can
+  soften fine edges.
+- **BiRefNet-Portrait** — tuned specifically for single-person portraits.
+  Can behave unpredictably on group photos or non-human subjects.
+- **BiRefNet-Massive** — same architecture as General, trained on more
+  data. Often slightly better quality at higher compute cost.
+- **BiRefNet-Lite** — faster, lower-memory variant of General. Slightly
+  lower quality; useful for quick passes or weaker hardware.
+
+BEN2 and BiRefNet-General are selected by default. Tick others as needed
+to compare.
+
+## Requirements
+
+- Windows 10 or 11.
+- Python 3.12 or newer. Python 3.14 is tested and works.
+- Git installed and on PATH. One of the models (BEN2) is installed from
+  GitHub rather than PyPI, which requires Git.
+- ~5 GB of free disk space for model weights and PyTorch on first run.
+- A GPU is **not** required. The tool runs on CPU by default and uses CUDA
+  automatically if a compatible NVIDIA GPU is present.
+
+## Installation
+
+1. Install Python from <https://www.python.org/downloads/> if you don't
+   already have it. During install, tick "Add Python to PATH".
+2. Install Git from <https://git-scm.com/download/win> if you don't
+   already have it. Use the default options.
+3. Download `the-electric-kool-aid-background-remover-v3.6.py` and put it anywhere
+   convenient.
+4. Open a Command Prompt or PowerShell window in that folder and run:
+
+   ```
+   py the-electric-kool-aid-background-remover-v3.6.py
+   ```
+
+5. On first launch the app will detect missing Python packages (PyTorch,
+   rembg, BEN2, Pillow, OpenCV) and offer to install them for you. Accept;
+   the install runs to several gigabytes and can take 10–20 minutes on a
+   reasonable connection. Subsequent launches start instantly.
+
+## Usage
+
+1. Pick your input. Click **Folder…** to process every image in a folder,
+   or **Image…** to process just one image. Supported formats:
+   `.jpg .jpeg .png .webp .tif .tiff .bmp`.
+2. Pick an output format from the dropdown (PNG, TIFF, or WebP). A short
+   description of each format appears next to the picker.
+3. Tick the models you want to run. You can pick one or several.
+4. Click **Run** and confirm.
+5. Watch the log and the status bar. The progress bar pulses while the
+   app is working and the status bar shows which image and model is
+   currently being processed (e.g. "Image 3/12 – BEN2…").
+6. When the run finishes, look inside the input location. You'll find new
+   subfolders named like `BEN2-PNG`, `BiRefNet-General-WebP`, etc., each
+   containing one cutout per input image. For single-image runs the
+   subfolders are created next to the chosen image.
+
+Output filenames carry the model name as a suffix
+(`photo_01_BEN2.png`, `photo_01_BiRefNet-General.png`) so the files stay
+self-identifying even if you move them out of their folders.
+
+## Tips
+
+- The first time you run a given model, its weights are downloaded
+  (300 MB – 1 GB depending on model). Subsequent runs reuse the cached
+  weights.
+- Speed is not a priority for this tool. A 24 MP image on CPU takes
+  10–30 seconds per model. If you have an NVIDIA GPU and CUDA-enabled
+  PyTorch, the tool will use it automatically and run much faster.
+- To compare two models on the same image, just tick both before running
+  and look at the matching files in their respective output folders.
+- The **Copy Output** button above the output log copies the entire run
+  log to your clipboard — useful for sharing timing data or error messages.
+- WebP has a hard 16383px-per-axis size limit. If your source images are
+  larger than that on either axis (rare, but possible with very large
+  scans or panoramas), the app will refuse to start a WebP run and list
+  the oversized files. Pick PNG or TIFF instead, or downscale the input.
+
+## Troubleshooting
+
+**"Git is not recognized…" during install.** Git isn't on your PATH.
+Reinstall Git with the default options, or open a fresh terminal after
+installing it.
+
+**Install fails on a specific package.** Python 3.14 is bleeding-edge and
+the occasional ML library lags behind. Try installing Python 3.12 and
+running with `py -3.12 the-electric-kool-aid-background-remover-v3.6.py`.
+
+**"No images found."** The folder you picked has no files with a
+supported extension. Subfolders are not scanned — only the top level of
+the folder.
+
+**Output folder for a model is empty.** That model produced no new
+output. Either every image was skipped because the output already existed,
+or every image failed. Check the log for `FAILED` lines.
+
+**"Image too large for WebP."** WebP cannot encode images bigger than
+16383px on either axis. The dialog lists which images are over the limit.
+Either pick PNG or TIFF, or remove/downscale the listed images.
+
+## What this tool is not
+
+- Not a one-shot background remover. It's built for batch A/B testing
+  models on a folder of similar images.
+- Not bundled as an `.exe`. PyTorch makes a bundled build several GB; the
+  `.py` file plus auto-install of dependencies is the intended distribution.
+- Not cross-platform. The auto-install assumes Windows. The underlying
+  Python code is not Windows-specific and could plausibly run on macOS or
+  Linux with manual dependency setup, but is not tested there.
+
+## Credits
+
+Window icon: lemon graphic from [Twemoji](https://github.com/twitter/twemoji),
+copyright 2020 Twitter Inc. and other contributors, licensed under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Packaged into a
+multi-resolution `.ico` via [favicon.io](https://favicon.io/emoji-favicons/lemon/).
+
+## Licence
+
+MIT — see [LICENSE](LICENSE).
+
+The models bundled with this tool are also MIT-licensed and free for
+commercial use.
