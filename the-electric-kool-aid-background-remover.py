@@ -231,10 +231,10 @@ class App(tk.Tk):
                                      command=self._cancel, state="disabled")
         self.cancel_btn.pack(side="left", padx=5)
 
-        # Progress bar (indeterminate; runs while processing)
+        # Progress bar (indeterminate; hidden until a run starts)
         self.progress = ttk.Progressbar(self, mode="indeterminate", length=300)
         self.progress.pack(pady=(0, 10))
-        self.progress.stop()  # prevent auto-animation on some Windows themes
+        self.progress.pack_forget()  # hidden until processing starts
 
         # Log
         f = ttk.LabelFrame(self, text="Output")
@@ -300,18 +300,20 @@ class App(tk.Tk):
         self.format_desc_var.set(self.format_descriptions.get(fmt, ""))
 
     def _start_progress(self, base_status):
-        """Start the indeterminate progress bar and dots-cycling status."""
+        """Show and start the indeterminate progress bar and dots-cycling status."""
         self._status_base = base_status
         self._dots_state = 0
-        self.after(0, self.progress.start, 100)  # 100ms per step
+        self.after(0, lambda: self.progress.pack(pady=(0, 10)))
+        self.after(0, self.progress.start, 100)
         self._tick_dots()
 
     def _stop_progress(self, final_status=""):
-        """Stop the progress bar and dots animation."""
+        """Stop and hide the progress bar and dots animation."""
         if self._dots_job is not None:
             self.after_cancel(self._dots_job)
             self._dots_job = None
         self.after(0, self.progress.stop)
+        self.after(0, self.progress.pack_forget)
         if final_status:
             self._status(final_status)
 
