@@ -65,8 +65,8 @@ different datasets, with different goals.
 In practice this means one model might give you a clean cut on a headshot
 but leave a messy edge on a photo with flyaway hair, while another handles
 the hair perfectly but struggles with a busy background. There's no way to
-know in advance which will work best on your specific images - the only
-reliable way is to try a couple and compare.
+know in advance which will work best on your specific images - just try
+them all and compare.
 
 That's the whole point of this tool. Run several models on a photo, look at the results side by side, and pick the one that worked best for that image. You may find that different photos need different models - a portrait with simple hair might look best with BiRefNet-General, while a shot with complex flyaway hair might need BEN2. There's no single right answer, and that's fine.
 
