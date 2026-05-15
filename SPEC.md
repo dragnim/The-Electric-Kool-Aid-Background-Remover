@@ -194,11 +194,10 @@ Two documentation files sit alongside the app:
 
 - `README.md` — user-facing docs (what it does, how to install, how to
   use, troubleshooting). Written for someone arriving at the project cold,
-  potentially via GitHub. Assumes no prior context. Not versioned in the
-  filename — a README always describes the current state of the repo.
-- `SPEC-v{version}.md` — developer/handover docs, versioned to match the
-  app (current: `SPEC.md`). Context, decisions, conventions, caveats.
-  Written for the next developer (human or AI) picking up the codebase.
+  potentially via GitHub. Assumes no prior context.
+- `SPEC.md` — developer/handover docs. Context, decisions, conventions,
+  caveats. Written for the next developer (human or AI) picking up the
+  codebase.
 
 The version string lives in a single `__version__` constant near the top of
 the app file; `APP_TITLE` is built from it, so the title bar always matches.
@@ -276,8 +275,9 @@ Run.
 - **v3.3** — added BiRefNet-HR model (mapped to rembg's `birefnet-hrsod`
   weights — high-resolution variant of the BiRefNet architecture, MIT
   licensed); added a Copy button above the output log that writes the
-  entire log to the clipboard; SPEC filename now versioned (`SPEC.md`)
-  per the standing convention.
+  entire log to the clipboard. At the time, the SPEC filename was versioned
+  (e.g. `SPEC-v3.3.md`); this convention was later dropped in favour of a
+  single `SPEC.md`.
 - **v3.2** — file renamed to `Kool-Aid-Background-Remover-v{version}.py`;
   `__version__` constant introduced and surfaced in the title bar so the
   window identifies which build is running. No behavioural changes.

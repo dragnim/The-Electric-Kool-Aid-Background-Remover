@@ -29,3 +29,7 @@ desktop.ini
 
 # Temp files written by the app (icon temp file, etc.)
 kabr_*.ico
+
+# Output folders created by the tool if run inside the repo directory
+BEN2-*/
+BiRefNet-*/
