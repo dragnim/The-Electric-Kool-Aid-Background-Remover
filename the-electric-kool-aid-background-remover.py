@@ -49,11 +49,22 @@ WEBP_MAX_DIM = 16383
 # it's bulky base64 and would dominate the top of the source if placed here.
 
 # import-name -> pip-install-target (versions pinned to match requirements.txt)
+def _rembg_pip_target():
+    """Return the correct rembg pip target based on whether CUDA torch is installed."""
+    try:
+        import torch
+        if torch.version.cuda:
+            return "rembg[gpu]==2.0.75"
+    except Exception:
+        pass
+    return "rembg[cpu]==2.0.75"
+
+
 REQUIRED_DEPS = {
     "PIL":   "Pillow==12.2.0",
     "torch": "torch==2.12.0",
     "cv2":   "opencv-python==4.13.0.92",
-    "rembg": "rembg[cpu]==2.0.75",
+    "rembg": None,   # determined at runtime by _rembg_pip_target()
     "ben2":  "https://github.com/PramaLLC/BEN2/archive/2c99a5da477b5523585bfa5c893888a6e818a8f6.zip",
 }
 
@@ -170,6 +181,9 @@ def check_missing_deps():
     """Return list of (module_name, pip_target) for any missing dependency."""
     missing = []
     for module, pip_target in REQUIRED_DEPS.items():
+        # rembg pip target is determined at runtime based on CUDA availability
+        if module == "rembg":
+            pip_target = _rembg_pip_target()
         try:
             __import__(module)
         except ImportError:

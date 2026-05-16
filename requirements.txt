@@ -11,8 +11,8 @@
 # Then run:
 #   py the-electric-kool-aid-background-remover.py
 #
-# Note: torch is the CPU build. For GPU support, replace with the
-#       appropriate CUDA wheel from https://pytorch.org/get-started/locally/
+# Note: torch is the GPU build (CUDA 12.6), compatible with onnxruntime-gpu.
+#       For CPU-only: pip install torch==2.12.0 --index-url https://download.pytorch.org/whl/cpu
 # Note: BEN2 is installed from a GitHub zip archive. Git is NOT required.
 # Note: `transparent-background` (for InSPyReNet) is deliberately NOT listed
 #       here. Its transitive dep chain (albumentations -> albucore ->
@@ -34,7 +34,7 @@ Pillow==12.2.0
 opencv-python==4.13.0.92
 
 # rembg dependencies (pinned for reproducibility)
-onnxruntime==1.26.0
+onnxruntime-gpu==1.26.0  # GPU build; use onnxruntime==1.26.0 for CPU-only
 PyMatting==1.1.15
 scipy==1.17.1
 scikit-image==0.26.0

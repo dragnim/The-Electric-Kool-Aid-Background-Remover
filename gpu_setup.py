@@ -17,10 +17,15 @@ import os
 
 REPO = "https://github.com/dragnim/The-Electric-Kool-Aid-Background-Remover"
 
-TORCH_VERSION     = "2.12.0"
-TORCHVISION_VERSION = "0.27.0"
-INDEX_CUDA_130    = "https://download.pytorch.org/whl/cu130"
+TORCH_VERSION        = "2.12.0"
+TORCHVISION_VERSION  = "0.27.0"
+ONNXRUNTIME_GPU_VERSION = "1.26.0"
+
+# We use cu126 (CUDA 12.6) rather than cu130 (CUDA 13.0) because
+# onnxruntime-gpu on PyPI is built for CUDA 12.x. Both work fine on
+# any RTX card; the CUDA version is the toolkit version, not a driver limit.
 INDEX_CUDA_126    = "https://download.pytorch.org/whl/cu126"
+TORCH_CUDA_LABEL  = "CUDA 12.6"
 
 
 def check_torch_state():
@@ -69,22 +74,22 @@ def get_nvidia_gpu():
 
 
 def pick_index_url(cuda_major):
-    """Return the best PyTorch index URL for this CUDA version, or None."""
+    """Return the PyTorch index URL if the driver is new enough, or None."""
     if cuda_major is None:
         return None, None
-    if cuda_major >= 13:
-        return INDEX_CUDA_130, "CUDA 13.0"
+    # Require driver CUDA 12+ (very old drivers won't support cu126 torch)
     if cuda_major >= 12:
-        return INDEX_CUDA_126, "CUDA 12.6"
+        return INDEX_CUDA_126, TORCH_CUDA_LABEL
     return None, None
 
 
 def install_torch(index_url, cuda_label, uninstall_first=False):
-    """Install (or upgrade) PyTorch. Returns True on success."""
+    """Install GPU PyTorch and onnxruntime-gpu. Returns True on success."""
     if uninstall_first:
-        print("\n  Uninstalling CPU version of PyTorch...")
+        print("\n  Uninstalling CPU PyTorch and onnxruntime...")
         subprocess.run(
-            [sys.executable, "-m", "pip", "uninstall", "torch", "torchvision", "-y"],
+            [sys.executable, "-m", "pip", "uninstall",
+             "torch", "torchvision", "onnxruntime", "-y"],
             capture_output=True
         )
 
@@ -96,6 +101,14 @@ def install_torch(index_url, cuda_label, uninstall_first=False):
         f"torch=={TORCH_VERSION}",
         f"torchvision=={TORCHVISION_VERSION}",
         "--index-url", index_url
+    ])
+    if result.returncode != 0:
+        return False
+
+    print(f"\n  Installing onnxruntime-gpu (for BiRefNet GPU acceleration)...")
+    result = subprocess.run([
+        sys.executable, "-m", "pip", "install",
+        f"onnxruntime-gpu=={ONNXRUNTIME_GPU_VERSION}"
     ])
     return result.returncode == 0
 
@@ -124,14 +137,15 @@ def main():
     force_cpu   = "--force-cpu"   in args
     force_offer = "--force-offer" in args
 
-    # --force-cpu: uninstall GPU torch, install CPU version
+    # --force-cpu: uninstall GPU versions, install CPU versions
     if force_cpu:
-        print("\n  Uninstalling GPU version of PyTorch...")
+        print("\n  Uninstalling GPU PyTorch and onnxruntime-gpu...")
         subprocess.run(
-            [sys.executable, "-m", "pip", "uninstall", "torch", "torchvision", "-y"],
+            [sys.executable, "-m", "pip", "uninstall",
+             "torch", "torchvision", "onnxruntime-gpu", "-y"],
             capture_output=True
         )
-        print("  Installing CPU version of PyTorch...")
+        print("  Installing CPU PyTorch...")
         result = subprocess.run([
             sys.executable, "-m", "pip", "install",
             f"torch=={TORCH_VERSION}",
@@ -139,6 +153,11 @@ def main():
             "--index-url", "https://download.pytorch.org/whl/cpu"
         ])
         if result.returncode == 0:
+            print("  Installing onnxruntime (CPU)...")
+            subprocess.run([
+                sys.executable, "-m", "pip", "install",
+                f"onnxruntime=={ONNXRUNTIME_GPU_VERSION}"
+            ])
             print("\n  Switched to CPU version successfully.")
         else:
             print("\n  Switch failed. For help visit:")
