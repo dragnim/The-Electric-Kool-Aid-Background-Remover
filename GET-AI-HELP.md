@@ -15,9 +15,10 @@ needs to give you relevant, accurate help.
 3. Copy everything inside the box below and paste it in as your first message
 4. Then ask your question, for example:
    - *"I'm on Windows 11 and I've never used Python. Walk me through installing this step by step."*
+   - *"I double-clicked launch.bat and got this error: [paste your error here]. What do I do?"*
    - *"The install failed with this error: [paste your error here]. What do I do?"*
    - *"Which model should I use for portraits with complex hair?"*
-   - *"How do I set up a virtual environment for this?"*
+   - *"How do I switch from the CPU version to the GPU version?"*
 
 ---
 
@@ -36,13 +37,15 @@ cutouts as PNG, TIFF, or WebP files. Everything runs on your own machine
 THE TOOL:
 - It is a single Python script: the-electric-kool-aid-background-remover.py
 - It has a simple desktop GUI (a window with buttons - no command line needed once installed)
+- It comes with launch.bat (double-click to start), cleanup.bat (remove everything it installed), and gpu_setup.py (GPU detection helper, used by launch.bat automatically)
 - GitHub repo: https://github.com/dragnim/The-Electric-Kool-Aid-Background-Remover
 
 SYSTEM REQUIREMENTS:
-- Windows 10 or 11
-- Python 3.12 or newer (Python 3.14 is confirmed working)
-- Around 5 GB of free disk space for model weights on first run
+- Windows 10 or 11 (Mac may work manually - see README)
+- Python 3.12 or newer (Python 3.14 is confirmed working) - launch.bat will install Python automatically if needed
+- Around 5 GB of free disk space for model weights and PyTorch on first run
 - A GPU is not required - it runs on CPU by default
+- If you have an NVIDIA GPU, launch.bat will detect it and offer a faster GPU-accelerated version of PyTorch
 
 THE MODELS (AI engines it uses to remove backgrounds):
 - BEN2 - good for hair edges and detailed subjects
@@ -58,16 +61,20 @@ THE MODELS (AI engines it uses to remove backgrounds):
   six models, which work fine on 3.14.
 BEN2 and BiRefNet-General are ticked by default.
 
-INSTALLATION - RECOMMENDED (virtual environment):
+INSTALLATION - EASIEST (recommended for most users):
+Download the zip from the releases page, unzip it, and double-click launch.bat.
+It handles everything - Python setup, GPU detection, and launching the app.
+If Windows shows a security warning, you can verify the file at https://www.virustotal.com before running.
+
+INSTALLATION - VIRTUAL ENVIRONMENT (for technically-minded users):
 py -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 py the-electric-kool-aid-background-remover.py
 
-INSTALLATION - QUICK START (system Python, easier but less isolated):
-Just run: py the-electric-kool-aid-background-remover.py
-On first launch it will detect missing packages and offer to install them.
-Accept and wait - the first install is several GB and can take 10-20 minutes.
+REMOVING THE APP:
+Double-click cleanup.bat. It shows everything installed and how to remove it,
+including a option to switch between CPU and GPU versions of PyTorch.
 
 HOW TO USE IT:
 1. Click Folder... to pick a folder of images, or Image... for a single image
