@@ -279,6 +279,29 @@ Run.
 
 ## Version history
 
+- **v3.10** - model cache status indicators and trash buttons. Each model
+  row in the UI now shows a status label (e.g. "Ready  420 MB" or
+  "Not downloaded") and a small × trash button on the right side of the
+  header line. The trash button is always present but greyed out (disabled)
+  when the model isn't cached, so the layout never shifts. Clicking the
+  trash button asks for confirmation, deletes the cached weights, logs what
+  was freed, and immediately updates the status label. Status is refreshed
+  at startup, after each run (new weights may have been downloaded), and
+  after any trash action.
+
+  Cache locations per model:
+  - rembg models (BiRefNet variants): `~/.u2net/{model-id}.onnx`
+  - BEN2: `~/.cache/huggingface/hub/models--PramaLLC--BEN2/` (folder)
+  - InSPyReNet: `~/.transparent-background/ckpt_base.pth`
+
+  Trash deletes only the weight files/folders, not the Python packages.
+  Deleting a model's weights is safe and reversible — they re-download
+  automatically on the next run that uses that model.
+
+  New module-level helpers: `_cache_path()`, `_is_cached()`,
+  `_cache_size_mb()`, `_delete_cache()`. New App methods:
+  `_refresh_model_status()`, `_trash_model()`. New instance vars:
+  `model_status_vars`, `model_trash_btns`.
 - **v3.9.2** - fix: progress bar invisible after adding the InSPyReNet
   model row in v3.9. The window height was a hardcoded 820px sized for
   six model rows; adding a seventh row (especially with the unusually

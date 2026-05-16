@@ -1,5 +1,5 @@
 """
-The Electric Kool-Aid Background Remover  (v3.9.2)
+The Electric Kool-Aid Background Remover  (v3.10)
 ==================================================
 
 A single-file Tkinter app that runs background removal across multiple models
@@ -34,7 +34,7 @@ from tkinter import ttk, filedialog, messagebox, scrolledtext
 
 # --- Constants ---------------------------------------------------------------
 
-__version__ = "3.9.2"
+__version__ = "3.10"
 
 APP_TITLE = f"The Electric Kool-Aid Background Remover v{__version__}"
 WINDOW_SIZE = "780x880"
@@ -64,44 +64,104 @@ MODELS = {
         "rembg_name": None,
         "description": "Strong on hair edges and 4K images. Confidence-guided matting refines low-confidence pixels. MIT licence.",
         "default_on": True,
+        # Weights are downloaded by HuggingFace hub into a versioned folder
+        # tree; presence of the top-level repo folder is enough to confirm
+        # the model is cached.
+        "cache_path": "~/.cache/huggingface/hub/models--PramaLLC--BEN2",
+        "cache_is_dir": True,
     },
     "BiRefNet-General": {
         "backend": "rembg",
         "rembg_name": "birefnet-general",
         "description": "Reliable general-purpose default. Strong fine-edge detection across a wide variety of subjects. MIT licence.",
         "default_on": True,
+        "cache_path": "~/.u2net/birefnet-general.onnx",
+        "cache_is_dir": False,
     },
     "BiRefNet-HR": {
         "backend": "rembg",
         "rembg_name": "birefnet-hrsod",
         "description": "High-resolution variant (HRSOD), trained for sharp boundaries on large images. Useful for 300 DPI source material where General softens fine edges. MIT licence.",
         "default_on": False,
+        "cache_path": "~/.u2net/birefnet-hrsod.onnx",
+        "cache_is_dir": False,
     },
     "BiRefNet-Portrait": {
         "backend": "rembg",
         "rembg_name": "birefnet-portrait",
         "description": "Tuned for single-person portraits. May behave unpredictably on groups, animals, or non-human subjects.",
         "default_on": False,
+        "cache_path": "~/.u2net/birefnet-portrait.onnx",
+        "cache_is_dir": False,
     },
     "BiRefNet-Massive": {
         "backend": "rembg",
         "rembg_name": "birefnet-massive",
         "description": "Same architecture as General, trained on a larger dataset. Often slightly better quality at higher compute cost.",
         "default_on": False,
+        "cache_path": "~/.u2net/birefnet-massive.onnx",
+        "cache_is_dir": False,
     },
     "BiRefNet-Lite": {
         "backend": "rembg",
         "rembg_name": "birefnet-general-lite",
         "description": "Faster, lower-memory variant of General. Slightly lower quality; useful for quick passes or weaker hardware.",
         "default_on": False,
+        "cache_path": "~/.u2net/birefnet-general-lite.onnx",
+        "cache_is_dir": False,
     },
     "InSPyReNet": {
         "backend": "inspyrenet",
         "rembg_name": None,
         "description": "Different architecture entirely (pyramid-based salient object detection). Worth comparing alongside BEN2 and BiRefNet. MIT licence. Installed lazily on first use; see SPEC.md if install fails on Python 3.14.",
         "default_on": False,
+        "cache_path": "~/.transparent-background/ckpt_base.pth",
+        "cache_is_dir": False,
     },
 }
+
+
+# --- Model cache helpers -----------------------------------------------------
+
+def _cache_path(model_name):
+    """Return the resolved Path for a model's cache file or folder."""
+    return Path(MODELS[model_name]["cache_path"]).expanduser()
+
+
+def _is_cached(model_name):
+    """Return True if the model's weights are present on disk."""
+    p = _cache_path(model_name)
+    if MODELS[model_name]["cache_is_dir"]:
+        return p.is_dir()
+    return p.is_file()
+
+
+def _cache_size_mb(model_name):
+    """Return the size of the model's cache in MB, or 0 if not cached."""
+    p = _cache_path(model_name)
+    if not p.exists():
+        return 0
+    if p.is_dir():
+        total = sum(f.stat().st_size for f in p.rglob("*") if f.is_file())
+    else:
+        total = p.stat().st_size
+    return total / (1024 * 1024)
+
+
+def _delete_cache(model_name):
+    """Delete a model's cached weights. Returns (ok, message)."""
+    import shutil
+    p = _cache_path(model_name)
+    if not p.exists():
+        return False, "Not cached."
+    try:
+        if p.is_dir():
+            shutil.rmtree(p)
+        else:
+            p.unlink()
+        return True, f"Deleted {p}"
+    except Exception as e:
+        return False, f"Delete failed: {e}"
 
 
 # --- Dependency handling -----------------------------------------------------
@@ -146,8 +206,11 @@ class App(tk.Tk):
         self._dots_job = None       # after() id for the processing-dots animation
         self._cancel_requested = False  # set True by Cancel button
         self._last_input_dir = None     # populated after each run for Open Folder
+        self.model_status_vars = {}     # name -> StringVar for the status label
+        self.model_trash_btns = {}      # name -> the trash Button widget
 
         self._build_ui()
+        self._refresh_model_status()
         threading.Thread(target=self._check_deps, daemon=True).start()
 
     def _set_icon(self):
@@ -226,11 +289,38 @@ class App(tk.Tk):
         for name, info in MODELS.items():
             sub = ttk.Frame(f)
             sub.pack(fill="x", padx=10, pady=4)
+
+            # Top row: checkbox on the left, trash + status on the right.
+            # Status and trash are packed right-to-left so trash stays flush
+            # to the right edge and status sits just to its left.
+            header = ttk.Frame(sub)
+            header.pack(fill="x")
+
             var = tk.BooleanVar(value=info["default_on"])
             self.model_vars[name] = var
-            ttk.Checkbutton(sub, text=name, variable=var).pack(anchor="w")
+            ttk.Checkbutton(header, text=name, variable=var).pack(
+                side="left", anchor="w")
+
+            # Trash button — always present, enabled/disabled by cache state.
+            # Use a closure to capture name correctly in the loop.
+            def _make_trash_cmd(n):
+                return lambda: self._trash_model(n)
+
+            trash_btn = ttk.Button(header, text="\u2715", width=2,
+                                   command=_make_trash_cmd(name))
+            trash_btn.pack(side="right", padx=(4, 0))
+            self.model_trash_btns[name] = trash_btn
+
+            # Status label — shows "Ready  X MB" or "Not downloaded".
+            status_var = tk.StringVar(value="\u2014")
+            self.model_status_vars[name] = status_var
+            ttk.Label(header, textvariable=status_var,
+                      foreground="gray50", font=("", 9)).pack(
+                side="right", padx=(0, 6))
+
+            # Description row.
             ttk.Label(sub, text=info["description"], foreground="gray50",
-                      wraplength=700, justify="left",
+                      wraplength=680, justify="left",
                       font=("", 9)).pack(anchor="w", padx=22)
 
         # Run / Cancel buttons
@@ -303,6 +393,54 @@ class App(tk.Tk):
         else:
             self._status("No output folder to open yet.")
 
+    # ---- Model cache status -------------------------------------------------
+
+    def _refresh_model_status(self):
+        """Update every model's status label and trash button state.
+
+        Safe to call from any thread - marshals UI updates via after(0).
+        Does only filesystem checks (no imports), so it's fast.
+        """
+        for name in MODELS:
+            cached = _is_cached(name)
+            if cached:
+                mb = _cache_size_mb(name)
+                text = f"Ready  {mb:.0f} MB"
+                trash_state = "normal"
+            else:
+                text = "Not downloaded"
+                trash_state = "disabled"
+            # Capture loop vars correctly.
+            def _apply(n=name, t=text, s=trash_state):
+                self.model_status_vars[n].set(t)
+                self.model_trash_btns[n].config(state=s)
+            self.after(0, _apply)
+
+    def _trash_model(self, name):
+        """Ask for confirmation then delete a model's cached weights."""
+        mb = _cache_size_mb(name)
+        ok = messagebox.askyesno(
+            "Delete model weights?",
+            f"Delete the cached weights for {name}?\n\n"
+            f"This will free approximately {mb:.0f} MB of disk space.\n"
+            f"The weights will be re-downloaded automatically next time\n"
+            f"you run this model.\n\n"
+            f"Location: {_cache_path(name)}"
+        )
+        if not ok:
+            return
+        success, msg = _delete_cache(name)
+        if success:
+            self._log(f"[cache] {name}: weights deleted ({mb:.0f} MB freed).")
+            self._status(f"{name} weights deleted.")
+        else:
+            self._log(f"[cache] {name}: delete failed — {msg}")
+            self._status(f"Delete failed: {msg}")
+        # Refresh status regardless so the UI reflects current state.
+        self._refresh_model_status()
+
+    # ---- Status bar ---------------------------------------------------------
+
     def _status(self, msg):
         self.after(0, self.status_var.set, msg)
 
@@ -344,6 +482,7 @@ class App(tk.Tk):
         self.deps_ready = True
         self.after(0, lambda: self.run_btn.config(state="normal"))
         self._status("Ready.")
+        self._refresh_model_status()
 
     def _ask_yesno(self, title, message):
         """Run messagebox.askyesno on the main thread, wait for the answer."""
@@ -731,6 +870,9 @@ class App(tk.Tk):
                 if self._last_input_dir:
                     self.open_folder_btn.config(state="normal")
             self.after(0, _restore_buttons)
+            # Refresh cache status after every run (new weights may have been
+            # downloaded on first use, or InSPyReNet may have been installed).
+            self._refresh_model_status()
 
 
 # --- Embedded window icon ----------------------------------------------------

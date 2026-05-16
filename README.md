@@ -21,7 +21,7 @@ Originally built for high-resolution professional photography where edge
 quality on hair, glasses, and complex backgrounds matters - but in reality
 you can run anything through it. Just try it and see.
 
-![The Electric Kool-Aid Background Remover v3.9.2](assets/screenshot.png)
+![The Electric Kool-Aid Background Remover v3.10](assets/screenshot.png)
 
 ## What this tool is not
 
@@ -226,6 +226,34 @@ the full log if you need to review it.
 start of a run and reused for every image - you don't pay the loading
 cost per image. This is the right behaviour for large batches and means
 memory usage stays stable throughout the run.
+
+## Freeing up disk space
+
+Each AI model downloads its weight files the first time you use it.
+The total footprint for all seven models is roughly 5–6 GB. If you
+only use a few models regularly, or you're done with the tool entirely,
+you can free up space by deleting the cached weights.
+
+The status shown next to each model in the app tells you what's
+downloaded and roughly how much space it's using. The **×** button next
+to each model deletes that model's weights. The weights re-download
+automatically if you run that model again.
+
+If you want to clean up manually, or remove everything at once, the
+weights are stored in these locations:
+
+| What | Location |
+|------|----------|
+| BiRefNet variants (all five) | `C:\Users\<you>\.u2net\` |
+| BEN2 | `C:\Users\<you>\.cache\huggingface\hub\models--PramaLLC--BEN2\` |
+| InSPyReNet | `C:\Users\<you>\.transparent-background\` |
+
+Deleting a model's weights does not uninstall the Python package — only
+the downloaded weight files are removed. The Python packages (rembg,
+ben2, transparent-background, torch, etc.) live in your Python
+installation's `site-packages` folder or in your virtual environment. To
+remove those too, deactivate the virtual environment and delete the
+`.venv` folder, or use `pip uninstall` for each package.
 
 ## Troubleshooting
 

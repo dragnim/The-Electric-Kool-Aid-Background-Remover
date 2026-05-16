@@ -1,4 +1,4 @@
-# Requirements for The Electric Kool-Aid Background Remover v3.9.2
+# Requirements for The Electric Kool-Aid Background Remover v3.10
 # Generated from a known-working environment:
 #   Python 3.14.3 on Windows 11, AMD Ryzen 9 9950X3D, NVIDIA RTX 2080
 #   Last verified: May 2026
