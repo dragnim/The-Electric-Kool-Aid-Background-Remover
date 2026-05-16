@@ -6,6 +6,14 @@
 
 ---
 
+## Getting started
+
+Download the zip from the [releases page](https://github.com/dragnim/The-Electric-Kool-Aid-Background-Remover/releases), unzip it, and **double-click `launch.bat`**. That's it.
+
+`launch.bat` handles everything — checking for Python, offering to install it if needed, detecting your GPU, and launching the app. The other files in the folder are helpers; you don't need to run them directly.
+
+---
+
 ## What is this tool?
 
 A free, local, privacy-respecting background remover for Windows. Runs
@@ -35,8 +43,11 @@ you can run anything through it. Just try it and see.
   for fast page loads; they are full-quality cutouts intended for further
   use in design, print, or web pipelines where you control the final
   compression step.
-- **Not bundled as an `.exe`.** PyTorch makes a bundled build several GB; the
-  `.py` file plus auto-install of dependencies is the intended distribution.
+- **Not a traditional installer.** There is no `.exe` or `.msi`. Instead,
+  `launch.bat` handles setup transparently — it checks for Python, offers
+  to install it locally if needed, detects your GPU, and launches the app.
+  PyTorch alone would make a bundled `.exe` several GB; the current approach
+  keeps things honest and auditable.
 - **Not cross-platform.** The auto-install assumes Windows. The underlying
   Python code is not Windows-specific and could plausibly run on macOS or
   Linux with manual dependency setup, but is not tested there.
@@ -106,6 +117,19 @@ to compare.
   automatically if a compatible NVIDIA GPU is present.
 
 ## Installation
+
+### Easiest: double-click launch.bat
+
+Download the zip from the [releases page](https://github.com/dragnim/The-Electric-Kool-Aid-Background-Remover/releases),
+unzip it, and double-click `launch.bat`. It will check for Python,
+offer to install it locally if needed, and start the app.
+
+**Windows security warning:** Windows will show a security warning the
+first time you run `launch.bat` because it was downloaded from the
+internet and is not code-signed. This is normal for open-source tools
+that aren't commercially signed. The bat file does exactly what it says —
+you can read every line of it in a text editor before running. Click
+**Run** to continue.
 
 ### Quickest safe install
 
@@ -179,9 +203,12 @@ self-identifying even if you move them out of their folders.
 - The first time you run a given model, its weights are downloaded
   (300 MB – 1 GB depending on model). Subsequent runs reuse the cached
   weights and start quickly.
-- **GPU acceleration:** if you have an NVIDIA GPU and CUDA-enabled PyTorch,
-  the tool will use it automatically - no configuration needed. Processing
-  time drops from 10–30 seconds per image to 1–3 seconds.
+- **GPU acceleration:** if you have an NVIDIA GPU, `launch.bat` will detect
+  it on first run and offer to install the GPU-accelerated version of
+  PyTorch. Processing time drops from 10–30 seconds per image to 1–3
+  seconds. The title bar shows `(GPU)` or `(CPU)` so you always know which
+  version is active. To switch between CPU and GPU versions after the fact,
+  run `cleanup.bat` and choose option 4.
 - To find the best model for your material, tick several and compare the
   results. Different images may need different models - there's no single
   right answer.
@@ -225,7 +252,13 @@ memory usage stays stable throughout the run.
 
 ## Freeing up disk space
 
-Each AI model downloads its weight files the first time you use it.
+Run **`cleanup.bat`** for a guided walkthrough of everything the app has
+put on your computer and how to remove it. It shows which model weights
+are present, their size, how to remove them, and options to switch between
+CPU and GPU PyTorch versions.
+
+For manual cleanup, each AI model downloads its weight files the first
+time you use it.
 The total footprint for all seven models is roughly 5–6 GB. If you
 only use a few models regularly, or you're done with the tool entirely,
 you can free up space by deleting the cached weights.
@@ -252,6 +285,18 @@ remove those too, deactivate the virtual environment and delete the
 `.venv` folder, or use `pip uninstall` for each package.
 
 ## Troubleshooting
+
+**"CUDA is not available" warning but the app still works.** This is
+harmless. It means PyTorch is installed but can't see your GPU — either
+because the CPU-only version is installed, your GPU driver is outdated,
+or your GPU is temporarily unavailable (e.g. a laptop in low-power mode).
+The app continues running on CPU. To switch to the GPU version, run
+`cleanup.bat` and choose option 4.
+
+**Installed GPU version but want to switch back to CPU.** Run `cleanup.bat`
+and choose option 4. This will uninstall the GPU version and install the
+CPU version. Useful if your GPU is causing issues or you no longer have
+one installed.
 
 **Install fails on a specific package.** Python 3.14 is bleeding-edge and
 the occasional ML library lags behind. Try installing Python 3.12 and

@@ -483,6 +483,15 @@ class App(tk.Tk):
         self.after(0, lambda: self.run_btn.config(state="normal"))
         self._status("Ready.")
         self._refresh_model_status()
+        # Update title bar to show whether GPU acceleration is available.
+        # Done here rather than at startup because torch isn't importable
+        # until the dep check completes.
+        try:
+            import torch
+            mode = "GPU" if torch.cuda.is_available() else "CPU"
+        except Exception:
+            mode = "CPU"
+        self.after(0, lambda: self.title(f"{APP_TITLE}  ({mode})"))
 
     def _ask_yesno(self, title, message):
         """Run messagebox.askyesno on the main thread, wait for the answer."""

@@ -84,12 +84,9 @@ compare results before committing to one model for a full batch.
 
 ## Non-goals
 
-- GPU acceleration. Speed is not a priority; CPU inference is fine for the
-  intended use case. Code falls back to GPU automatically if
-  `torch.cuda.is_available()` returns True, but no setup is required.
 - Bundling as a `.exe`. PyTorch alone would make any PyInstaller bundle
-  multiple GB. The tool is portable as a `.py` file that uses the system
-  Python and self-bootstraps its dependencies.
+  multiple GB. The tool is distributed as a `.py` file plus `launch.bat`,
+  which handles Python setup and GPU detection transparently.
 - Cross-platform. Targeting Windows only.
 - Image preview/comparison UI. Output folders are inspected externally.
 
@@ -122,6 +119,25 @@ before inclusion, since the likely uses are commercial.
 ## Technical decisions
 
 - **Tkinter / ttk** for the GUI. Stdlib-only, no extra dep, looks native enough.
+- **Launcher files** - three files sit alongside the `.py` script:
+  - `launch.bat` — the user-facing entry point. Checks for Python (embedded
+    or system), installs embedded Python 3.12 if needed (into `_python\`),
+    runs `gpu_setup.py` to handle GPU detection and PyTorch install, then
+    launches the app.
+  - `gpu_setup.py` — Python helper called by `launch.bat` and `cleanup.bat`.
+    Detects NVIDIA GPU via `nvidia-smi`, checks whether torch is CPU or CUDA,
+    and offers to install/upgrade/downgrade PyTorch accordingly. All GPU
+    detection logic lives here rather than in the bat file to avoid batch
+    variable expansion issues. Must be called with `--from-launcher` flag
+    to suppress the "don't run directly" message; `--force-cpu` and
+    `--force-offer` flags used by `cleanup.bat` for switching.
+  - `cleanup.bat` — management tool. Shows what the app installed and where,
+    with folder sizes. Section 4 lets users switch between CPU and GPU
+    PyTorch versions by calling `gpu_setup.py --force-cpu` or
+    `--force-offer`.
+- **Title bar CPU/GPU indicator** - `_enable_run()` updates the window title
+  to append `(GPU)` or `(CPU)` after deps are confirmed loaded, reflecting
+  actual `torch.cuda.is_available()` state rather than what's installed.
 - **Threading** - dependency install and image processing run on background
   threads; UI updates marshalled via `self.after(0, ...)`.
 - **DPI passthrough** - `src.info.get("dpi", (300, 300))` is read per-image
@@ -281,15 +297,34 @@ Run.
 
 ## Version history
 
-- **v3.11** - eliminated Git as a requirement. BEN2 was previously installed
-  via `git+https://github.com/PramaLLC/BEN2.git@{commit}`, which required
-  Git to be installed and on PATH. Switched to installing from a GitHub zip
-  archive URL instead (`https://github.com/PramaLLC/BEN2/archive/{commit}.zip`),
-  which pip handles natively without Git. Same pinned commit, same code,
-  no behaviour change. Git is still needed if you want to clone the repo
-  itself (the Quickest safe install path), but is no longer needed just
-  to run the app. This is groundwork for the upcoming launcher which needs
-  to bootstrap a fresh machine without assuming Git is present.
+- **v3.11** - two changes: eliminated Git as a requirement, and added the
+  launcher file set (`launch.bat`, `gpu_setup.py`, `cleanup.bat`).
+
+  **Git removal:** BEN2 switched from `git+https://github.com/PramaLLC/BEN2.git`
+  to a GitHub zip archive URL, which pip handles natively without Git.
+
+  **Launcher files:** `launch.bat` is now the recommended entry point.
+  It handles Python detection (embedded or system), installs embedded
+  Python 3.12 into `_python\` if needed, runs `gpu_setup.py` for GPU
+  detection and PyTorch install choice, then launches the app. All GPU
+  detection logic lives in `gpu_setup.py` (Python) rather than the bat
+  file — batch variable expansion made reliable detection impossible in
+  pure batch. `gpu_setup.py` uses `nvidia-smi -q` for CUDA version,
+  checks `torch.version.cuda` for install state, and offers GPU install
+  on first run or upgrade/downgrade thereafter. Must be called with
+  `--from-launcher` to skip the "don't run directly" message.
+
+  `cleanup.bat` is the management tool — shows everything installed with
+  sizes, and Section 4 switches between CPU/GPU PyTorch via
+  `gpu_setup.py --force-cpu` or `--force-offer`.
+
+  Title bar now shows `(GPU)` or `(CPU)` after deps load, set in
+  `_enable_run()` from `torch.cuda.is_available()`.
+
+  README gains a Getting Started section at the top, updated GPU tip,
+  updated "not an exe" entry, and cleanup.bat mentioned in disk space
+  section. SPEC Non-goals updated (GPU is now actively offered).
+
 - **v3.10** - model cache status indicators and trash buttons. Each model
   row in the UI now shows a status label (e.g. "Ready  420 MB" or
   "Not downloaded") and a small × trash button on the right side of the
