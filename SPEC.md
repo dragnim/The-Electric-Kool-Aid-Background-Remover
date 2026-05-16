@@ -164,10 +164,12 @@ before inclusion, since the likely uses are commercial.
 
   **Attribution:** the lemon icon is CC BY 4.0 licensed; credit must
   appear in README.md (see Credits section there).
-- **BEN2 install via Git URL** - BEN2 isn't on PyPI as `ben2`. The pip target
-  is `git+https://github.com/PramaLLC/BEN2.git`. This requires Git on PATH.
-  BEN2 also imports `cv2` (OpenCV) without listing it as a dependency, so
-  `opencv-python` is installed alongside.
+- **BEN2 install via GitHub zip** - BEN2 isn't on PyPI. Rather than using
+  a `git+https://` URL (which requires Git installed on PATH), we install
+  from a pinned GitHub zip archive:
+  `https://github.com/PramaLLC/BEN2/archive/{commit}.zip`
+  pip can install directly from zip URLs without Git. This removes Git as
+  a requirement entirely, which matters for the launcher work ahead.
 - **InSPyReNet is lazy-loaded** - this is the key thing to know about
   InSPyReNet. The model is wrapped in the `transparent-background` PyPI
   package, and the obvious thing would be to drop it into `REQUIRED_DEPS`
@@ -279,6 +281,15 @@ Run.
 
 ## Version history
 
+- **v3.11** - eliminated Git as a requirement. BEN2 was previously installed
+  via `git+https://github.com/PramaLLC/BEN2.git@{commit}`, which required
+  Git to be installed and on PATH. Switched to installing from a GitHub zip
+  archive URL instead (`https://github.com/PramaLLC/BEN2/archive/{commit}.zip`),
+  which pip handles natively without Git. Same pinned commit, same code,
+  no behaviour change. Git is still needed if you want to clone the repo
+  itself (the Quickest safe install path), but is no longer needed just
+  to run the app. This is groundwork for the upcoming launcher which needs
+  to bootstrap a fresh machine without assuming Git is present.
 - **v3.10** - model cache status indicators and trash buttons. Each model
   row in the UI now shows a status label (e.g. "Ready  420 MB" or
   "Not downloaded") and a small × trash button on the right side of the

@@ -41,7 +41,6 @@ THE TOOL:
 SYSTEM REQUIREMENTS:
 - Windows 10 or 11
 - Python 3.12 or newer (Python 3.14 is confirmed working)
-- Git installed and on PATH
 - Around 5 GB of free disk space for model weights on first run
 - A GPU is not required - it runs on CPU by default
 
@@ -87,7 +86,6 @@ OUTPUT:
 - Re-running skips images that already have output, so you can safely resume
 
 COMMON ISSUES:
-- "Git is not recognized" - Git is not installed or not on PATH, reinstall it
 - Install fails on a package - try Python 3.12 if you are on a newer version
 - InSPyReNet install fails with "Microsoft Visual C++ 14.0 or greater is
   required" - this is a known issue on Python 3.14. Untick InSPyReNet and

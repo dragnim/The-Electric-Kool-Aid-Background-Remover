@@ -21,7 +21,7 @@ Originally built for high-resolution professional photography where edge
 quality on hair, glasses, and complex backgrounds matters - but in reality
 you can run anything through it. Just try it and see.
 
-![The Electric Kool-Aid Background Remover v3.10](assets/screenshot.png)
+![The Electric Kool-Aid Background Remover v3.11](assets/screenshot.png)
 
 ## What this tool is not
 
@@ -101,8 +101,6 @@ to compare.
 
 - Windows 10 or 11.
 - Python 3.12 or newer. Python 3.14 is tested and works.
-- Git installed and on PATH. One of the models (BEN2) is installed from
-  GitHub rather than PyPI, which requires Git.
 - ~5 GB of free disk space for model weights and PyTorch on first run.
 - A GPU is **not** required. The tool runs on CPU by default and uses CUDA
   automatically if a compatible NVIDIA GPU is present.
@@ -141,17 +139,15 @@ If you just want to get going and aren't worried about dependency isolation:
 
 1. Install Python from <https://www.python.org/downloads/> if you don't
    already have it. During install, tick "Add Python to PATH".
-2. Install Git from <https://git-scm.com/download/win> if you don't
-   already have it. Use the default options.
-3. Download `the-electric-kool-aid-background-remover.py` and put it
+2. Download `the-electric-kool-aid-background-remover.py` and put it
    anywhere convenient.
-4. Open a Command Prompt or PowerShell window in that folder and run:
+3. Open a Command Prompt or PowerShell window in that folder and run:
 
    ```
    py the-electric-kool-aid-background-remover.py
    ```
 
-5. On first launch the app detects missing Python packages (PyTorch, rembg,
+4. On first launch the app detects missing Python packages (PyTorch, rembg,
    BEN2, Pillow, OpenCV) and offers to install them. Accept; the install
    runs to several gigabytes and can take 10–20 minutes on a reasonable
    connection. Subsequent launches start instantly.
@@ -256,10 +252,6 @@ remove those too, deactivate the virtual environment and delete the
 `.venv` folder, or use `pip uninstall` for each package.
 
 ## Troubleshooting
-
-**"Git is not recognized…" during install.** Git isn't on your PATH.
-Reinstall Git with the default options, or open a fresh terminal after
-installing it.
 
 **Install fails on a specific package.** Python 3.14 is bleeding-edge and
 the occasional ML library lags behind. Try installing Python 3.12 and

@@ -1,5 +1,5 @@
 """
-The Electric Kool-Aid Background Remover  (v3.10)
+The Electric Kool-Aid Background Remover  (v3.11)
 ==================================================
 
 A single-file Tkinter app that runs background removal across multiple models
@@ -10,7 +10,8 @@ To run:
     py the-electric-kool-aid-background-remover.py
 
 On first launch the app will detect missing Python dependencies and offer to
-install them (rembg, BEN2 from GitHub, torch, opencv-python, Pillow).
+install them (rembg, BEN2, torch, opencv-python, Pillow). Git is NOT required
+- BEN2 is installed from a GitHub zip archive rather than via git+https.
 
 InSPyReNet is loaded lazily on first use rather than at startup, because the
 `transparent-background` package has a heavy transitive dependency chain
@@ -21,7 +22,6 @@ other six models always work, even when InSPyReNet's install fails.
 Requires:
     - Python 3.12+ on Windows (Python 3.14 verified working with current
       PyTorch wheels for everything except InSPyReNet - see SPEC.md).
-    - Git installed and on PATH (BEN2 ships from GitHub, not PyPI).
 """
 
 import os
@@ -34,7 +34,7 @@ from tkinter import ttk, filedialog, messagebox, scrolledtext
 
 # --- Constants ---------------------------------------------------------------
 
-__version__ = "3.10"
+__version__ = "3.11"
 
 APP_TITLE = f"The Electric Kool-Aid Background Remover v{__version__}"
 WINDOW_SIZE = "780x880"
@@ -54,7 +54,7 @@ REQUIRED_DEPS = {
     "torch": "torch==2.12.0",
     "cv2":   "opencv-python==4.13.0.92",
     "rembg": "rembg[cpu]==2.0.75",
-    "ben2":  "git+https://github.com/PramaLLC/BEN2.git@2c99a5da477b5523585bfa5c893888a6e818a8f6",
+    "ben2":  "https://github.com/PramaLLC/BEN2/archive/2c99a5da477b5523585bfa5c893888a6e818a8f6.zip",
 }
 
 # Display name -> metadata
