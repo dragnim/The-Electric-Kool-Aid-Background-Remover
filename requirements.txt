@@ -1,4 +1,4 @@
-# Requirements for The Electric Kool-Aid Background Remover v3.8
+# Requirements for The Electric Kool-Aid Background Remover v3.9.2
 # Generated from a known-working environment:
 #   Python 3.14.3 on Windows 11, AMD Ryzen 9 9950X3D, NVIDIA RTX 2080
 #   Last verified: May 2026
@@ -14,6 +14,12 @@
 # Note: BEN2 is installed from GitHub, not PyPI. Git must be on PATH.
 # Note: torch is the CPU build. For GPU support, replace with the
 #       appropriate CUDA wheel from https://pytorch.org/get-started/locally/
+# Note: `transparent-background` (for InSPyReNet) is deliberately NOT listed
+#       here. Its transitive dep chain (albumentations -> albucore ->
+#       stringzilla) fails to build on Python 3.14 (no wheel + needs MSVC).
+#       The app installs it lazily on first use of the InSPyReNet model, so
+#       a failure there doesn't break the other six models. If you want
+#       InSPyReNet and you're on Python 3.14, switch to Python 3.12.
 
 # Core inference
 torch==2.12.0

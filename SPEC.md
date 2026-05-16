@@ -1,7 +1,7 @@
 # The Electric Kool-Aid Background Remover - Project Brief
 
 A free, local, privacy-respecting background remover for Windows. Removes
-backgrounds from single images or whole folders using a choice of six AI
+backgrounds from single images or whole folders using a choice of seven AI
 models, with lossless PNG, TIFF, or WebP output.
 
 This document is the developer and contributor handover brief. Its primary
@@ -65,6 +65,8 @@ compare results before committing to one model for a full batch.
    - **BiRefNet-Portrait** (via `rembg`)
    - **BiRefNet-Massive** (via `rembg`)
    - **BiRefNet-Lite** (via `rembg`)
+   - **InSPyReNet** (via `transparent-background`, MIT-licensed,
+     installed lazily on first use - see Technical decisions)
    See the model table below for details and licence notes.
 4. **Output** - for each selected model, a subfolder is created **inside the
    input folder** with the name `{ModelName}-{FORMAT}`, e.g.:
@@ -101,10 +103,15 @@ compare results before committing to one model for a full batch.
 | BiRefNet-Portrait   | rembg   | `birefnet-portrait`      | Off     | Single-portrait tuned; mixed on groups.     |
 | BiRefNet-Massive    | rembg   | `birefnet-massive`       | Off     | Larger training set than General.           |
 | BiRefNet-Lite       | rembg   | `birefnet-general-lite`  | Off     | Faster, lighter variant of General.         |
+| InSPyReNet          | direct  | `transparent_background.Remover` | Off | Pyramid-based salient object detection (ACCV 2022). Different architecture family from BEN2/BiRefNet. Configured with `mode='base'`, `resize='dynamic'`. MIT. **Lazy install** - see Technical decisions. |
 
 Adding a model is a single entry in `MODELS` in the app file with
-`backend`, `rembg_name`, `description`, and `default_on`. No other code
-changes needed.
+`backend`, `rembg_name`, `description`, and `default_on`. Models with a
+new backend (not `rembg`) also need a load block and an inference branch
+in `_process` - see the BEN2 and InSPyReNet code paths for the pattern.
+For backends with fragile install (like InSPyReNet), follow the
+`_try_load_inspyrenet` pattern: lazy import, prompt-to-install on
+ImportError, graceful degradation to a None return on any failure.
 
 **Licence note for future additions:** BRIA-RMBG (`bria-rmbg`) is
 available via rembg but was deliberately excluded from this build because
@@ -161,8 +168,43 @@ before inclusion, since the likely uses are commercial.
   is `git+https://github.com/PramaLLC/BEN2.git`. This requires Git on PATH.
   BEN2 also imports `cv2` (OpenCV) without listing it as a dependency, so
   `opencv-python` is installed alongside.
-- **Sessions loaded once** - rembg sessions and the BEN2 model are
-  instantiated once at the start of a run and reused across all images.
+- **InSPyReNet is lazy-loaded** - this is the key thing to know about
+  InSPyReNet. The model is wrapped in the `transparent-background` PyPI
+  package, and the obvious thing would be to drop it into `REQUIRED_DEPS`
+  alongside `rembg` and `ben2`. **We don't.** The reason: its dep chain is
+  `transparent-background` -> `albumentations` -> `albucore` -> `stringzilla`,
+  and `stringzilla 4.x` doesn't ship a Python 3.14 wheel as of May 2026.
+  On 3.14, pip falls back to building from source, which requires the
+  Microsoft Visual C++ Build Tools - an enormous extra install nobody
+  wants to do for a background remover. We tried `transparent-background`
+  as a startup dep in early v3.9 and it broke the dependency check entirely
+  on Python 3.14, blocking the other six models that were working fine.
+  
+  Solution: keep it out of `REQUIRED_DEPS`. The `_try_load_inspyrenet`
+  helper handles the lazy path - try importing, prompt-to-install on
+  ImportError, gracefully degrade on any failure. The caller drops every
+  InSPyReNet target from the run if `_try_load_inspyrenet` returns None,
+  and continues with the remaining models. This means: (a) users on 3.12
+  who tick InSPyReNet get prompted, install succeeds, model works;
+  (b) users on 3.14 who tick InSPyReNet get prompted, install fails, run
+  continues with the other models they ticked, log explains the fix.
+  
+  The model itself, when it does load, is configured with `mode='base'`
+  (full-quality checkpoint, not `fast`) and `resize='dynamic'` (sharper
+  edges than default `static`, slightly less stable - appropriate for the
+  high-DPI photography this tool targets, since edge quality is the whole
+  reason for running multiple models in the first place). Its weights
+  (~180 MB) download from Google Drive to `~/.transparent-background/` on
+  first model construction. If that download is blocked by a proxy, the
+  package supports an `http_proxy` field in its config file.
+  
+  **For future maintainers:** if a new backend has similar install fragility
+  (e.g. depends on a not-yet-wheeled C extension), follow the same pattern.
+  Don't add it to `REQUIRED_DEPS`; write a `_try_load_<name>` helper; have
+  the caller drop the targets and continue on a None return.
+- **Sessions loaded once** - rembg sessions, the BEN2 model, and the
+  InSPyReNet model (when loaded) are instantiated once at the start of a
+  run and reused across all images.
 
 ## Known issues / caveats
 
@@ -172,6 +214,11 @@ before inclusion, since the likely uses are commercial.
 - **Python 3.14 is bleeding-edge**. Most ML libraries support it as of May
   2026 but some transitive deps may not. If install fails on a specific
   package, suggest Python 3.12.
+- **InSPyReNet on Python 3.14 doesn't work as of May 2026.** Documented
+  above under Technical decisions. The lazy-load + graceful-degradation
+  pattern means this doesn't break anything else; users get a clear
+  message and the rest of the app keeps working. Revisit this once
+  stringzilla ships 3.14 wheels (track at https://pypi.org/project/stringzilla/).
 - **BEN2 setup.py classifies as Python 3.10** but actually works on newer
   versions. The classifier is documentation-only.
 - **`birefnet-portrait` on group photos** behaves unpredictably (model was
@@ -232,6 +279,70 @@ Run.
 
 ## Version history
 
+- **v3.9.2** - fix: progress bar invisible after adding the InSPyReNet
+  model row in v3.9. The window height was a hardcoded 820px sized for
+  six model rows; adding a seventh row (especially with the unusually
+  long install-warning description that was originally on InSPyReNet)
+  pushed the progress bar - which is packed just before the Log frame -
+  off the bottom of the window. The Log frame's `expand=True` then ate
+  the remaining vertical space, leaving the progress bar with zero pixels
+  to draw into. Verified by checking `progress.winfo_geometry()`: in the
+  broken build it reported `1x1+0+0`; after the fix, `300x14+240+837` as
+  expected.
+  
+  Two changes: `WINDOW_SIZE` bumped from `780x820` to `780x880` (one
+  extra row of headroom for the 7th model), and the InSPyReNet
+  description shortened from a 350+ character paragraph (which wrapped to
+  4 lines) to a single short sentence consistent with the other model
+  descriptions (which wrap to 1-2 lines). The detailed Python 3.14
+  install-failure warning lives in the install-prompt dialog and the
+  README troubleshooting section, where it's more useful.
+  
+  Future-maintainer note: if more models are ever added, the window
+  needs to grow or the model descriptions need to stay short. The pack
+  order is Input -> Format -> Models (no expand) -> Run/Cancel buttons
+  -> Progress bar (no expand) -> Log frame (expand=True) -> Status bar.
+  Anything not-expand above the Log frame consumes from the same fixed
+  pool of pixels; once that pool is exhausted, widgets below the Models
+  frame get squeezed to zero, but the bug is silent - no error, no
+  warning, the widget just doesn't render.
+- **v3.9.1** - patch: renamed the bottom LabelFrame from "Output" to "Log",
+  and the "Copy Output" button to "Copy Log". Both labels were doing
+  double duty - "Output" meant both "the cutout files saved to disk"
+  (in "Open Output Folder", "Output folders will be created in...") and
+  "the run log shown in the text widget" (in "Copy Output", "Output"
+  LabelFrame). The button sat right next to "Open Output Folder", which
+  made the ambiguity actively confusing. Now "Output" unambiguously means
+  the saved files and "Log" unambiguously means the run log. The
+  `__version__` constant and `APP_TITLE` are bumped accordingly. No code
+  behaviour changes.
+- **v3.9** - added InSPyReNet as a seventh model, via the
+  `transparent-background` PyPI package (MIT licence). Selected because the
+  previous six models were really two architecture families (BEN2 plus
+  five BiRefNet variants), and InSPyReNet is a meaningfully different third
+  family - pyramid-based salient object detection rather than bilateral
+  reference or confidence-guided matting. Useful for comparison runs on
+  material where BEN2 and BiRefNet disagree.
+  
+  Configured with `mode='base'` and `resize='dynamic'` for best edge
+  quality. Default off (to keep first-time runs at two models, consistent
+  with the existing default policy).
+  
+  **The install is lazy-loaded.** First attempt was to add
+  `transparent-background` to `REQUIRED_DEPS` like every other model
+  dependency. That failed on Python 3.14: the transitive dep chain
+  includes `stringzilla`, which has no 3.14 wheel as of May 2026, so pip
+  tries to build it from source and fails for any user without MSVC Build
+  Tools installed. The failure blocked the entire startup dependency check
+  rather than just InSPyReNet, breaking the other six models that were
+  working fine. The fix was to move InSPyReNet's install into a lazy
+  `_try_load_inspyrenet` helper that runs only when the user actually
+  ticks the InSPyReNet checkbox and clicks Run, with graceful degradation
+  on any failure (import error, declined install, install error,
+  instantiation error). On a failure, InSPyReNet is dropped from this run's
+  targets and the other selected models continue. See the Technical
+  decisions section for the full rationale and the pattern for future
+  fragile-install backends.
 - **v3.8** - fix progress bar animating at startup on some Windows themes;
   `progress.stop()` called immediately after widget creation.
 - **v3.7.1** - patch: `REQUIRED_DEPS` auto-install targets now pinned to

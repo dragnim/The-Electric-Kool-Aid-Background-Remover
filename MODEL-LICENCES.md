@@ -86,3 +86,17 @@ confirmed here before inclusion.
 | Licence | MIT |
 | Licence URL | https://huggingface.co/ZhengPeng7/BiRefNet-lite/blob/main/LICENSE |
 | Verified | May 2026 |
+
+---
+
+## InSPyReNet
+
+| Field   | Detail |
+|---------|--------|
+| Display name | InSPyReNet |
+| Source | https://github.com/plemeri/transparent-background (package) / https://github.com/plemeri/InSPyReNet (model) |
+| Install | `pip install transparent-background` (lazy - on first use of this model in the app) |
+| Licence | MIT |
+| Licence URL | https://github.com/plemeri/transparent-background/blob/main/LICENSE |
+| Verified | May 2026 |
+| Note | Pyramid-based salient object detection (ACCV 2022). Different architecture family from BEN2 and BiRefNet, so a useful third comparison point. Configured with `resize='dynamic'` for sharper edges. Installed lazily because `transparent-background` pulls in `albumentations -> albucore -> stringzilla`, and `stringzilla` has no Python 3.14 wheel, so installing on 3.14 needs an MSVC build toolchain. If your install fails for this reason, fall back to Python 3.12. |

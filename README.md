@@ -13,7 +13,7 @@ entirely on your own machine - no cloud upload, no subscription, no
 images sent anywhere.
 
 Supports batch processing of whole folders or single images, with a choice
-of six AI models so you can find the one that works best on your material.
+of seven AI models so you can find the one that works best on your material.
 Output is PNG, TIFF, or WebP with transparency preserved and DPI metadata
 carried through - ready for web, print, or further editing.
 
@@ -21,7 +21,7 @@ Originally built for high-resolution professional photography where edge
 quality on hair, glasses, and complex backgrounds matters - but in reality
 you can run anything through it. Just try it and see.
 
-![The Electric Kool-Aid Background Remover v3.8](assets/screenshot.png)
+![The Electric Kool-Aid Background Remover v3.9.2](assets/screenshot.png)
 
 ## What this tool is not
 
@@ -86,6 +86,13 @@ commercial use.
   data. Often slightly better quality at higher compute cost.
 - **[BiRefNet-Lite](https://huggingface.co/ZhengPeng7/BiRefNet-lite)** - faster, lower-memory variant of General. Slightly
   lower quality; useful for quick passes or weaker hardware.
+- **[InSPyReNet](https://github.com/plemeri/transparent-background)** - a different architecture entirely (pyramid-based
+  salient object detection). Worth running alongside BEN2 and BiRefNet on
+  tricky material since it can disagree with both in useful ways. Installed
+  lazily on first use rather than at startup, because the install can fail
+  on Python 3.14 due to a transitive dependency (`stringzilla`) that needs
+  a C++ compiler. If install fails, the rest of the app still works -
+  just stick to the other six models, or switch to Python 3.12.
 
 BEN2 and BiRefNet-General are selected by default. Tick others as needed
 to compare.
@@ -182,7 +189,7 @@ self-identifying even if you move them out of their folders.
 - To find the best model for your material, tick several and compare the
   results. Different images may need different models - there's no single
   right answer.
-- The **Copy Output** button above the output log copies the entire run
+- The **Copy Log** button above the log copies the entire run
   log to your clipboard - useful for sharing timing data or error messages.
 - WebP has a hard 16383px-per-axis size limit. If your source images are
   larger than that on either axis (rare, but possible with very large
@@ -210,9 +217,9 @@ in one go, consider splitting into batches of 200–300. Shorter runs are
 easier to manage, easier to check, and if something goes wrong you lose
 less progress before the next resume point.
 
-**The log gets long.** The output log in the app will have thousands of
+**The log gets long.** The log in the app will have thousands of
 lines by the end of a big run. It stays functional but may get slightly
-sluggish on very large batches. Use the **Copy Output** button to grab
+sluggish on very large batches. Use the **Copy Log** button to grab
 the full log if you need to review it.
 
 **Models are loaded once.** The AI models are loaded into memory at the
@@ -229,6 +236,15 @@ installing it.
 **Install fails on a specific package.** Python 3.14 is bleeding-edge and
 the occasional ML library lags behind. Try installing Python 3.12 and
 running with `py -3.12 the-electric-kool-aid-background-remover.py`.
+
+**InSPyReNet install fails with "Microsoft Visual C++ 14.0 or greater is
+required" or similar.** This is the most common case of the issue above.
+InSPyReNet's install pulls in `stringzilla`, which has no Python 3.14
+wheel as of May 2026, so pip falls back to compiling it from source -
+which needs a C++ toolchain that you probably don't have. The simplest
+fix is to switch to Python 3.12, where prebuilt wheels exist. The other
+six models are unaffected and continue to work on 3.14 normally; just
+untick InSPyReNet and run with the rest.
 
 **"No images found."** The folder you picked has no files with a
 supported extension. Subfolders are not scanned - only the top level of

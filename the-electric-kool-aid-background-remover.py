@@ -1,10 +1,10 @@
 """
-The Electric Kool-Aid Background Remover  (v3.8)
+The Electric Kool-Aid Background Remover  (v3.9.2)
 ==================================================
 
 A single-file Tkinter app that runs background removal across multiple models
-(BEN2, BiRefNet-General/HR/Portrait/Massive/Lite) and saves outputs into
-labelled subfolders inside the chosen input location.
+(BEN2, BiRefNet-General/HR/Portrait/Massive/Lite, InSPyReNet) and saves
+outputs into labelled subfolders inside the chosen input location.
 
 To run:
     py the-electric-kool-aid-background-remover.py
@@ -12,9 +12,15 @@ To run:
 On first launch the app will detect missing Python dependencies and offer to
 install them (rembg, BEN2 from GitHub, torch, opencv-python, Pillow).
 
+InSPyReNet is loaded lazily on first use rather than at startup, because the
+`transparent-background` package has a heavy transitive dependency chain
+(albumentations -> albucore -> stringzilla) that sometimes fails to build
+on newer Python versions. Keeping it out of the startup deps means the
+other six models always work, even when InSPyReNet's install fails.
+
 Requires:
     - Python 3.12+ on Windows (Python 3.14 verified working with current
-      PyTorch wheels).
+      PyTorch wheels for everything except InSPyReNet - see SPEC.md).
     - Git installed and on PATH (BEN2 ships from GitHub, not PyPI).
 """
 
@@ -28,10 +34,10 @@ from tkinter import ttk, filedialog, messagebox, scrolledtext
 
 # --- Constants ---------------------------------------------------------------
 
-__version__ = "3.8"
+__version__ = "3.9.2"
 
 APP_TITLE = f"The Electric Kool-Aid Background Remover v{__version__}"
-WINDOW_SIZE = "780x820"
+WINDOW_SIZE = "780x880"
 
 IMG_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".tif", ".tiff", ".bmp"}
 
@@ -87,6 +93,12 @@ MODELS = {
         "backend": "rembg",
         "rembg_name": "birefnet-general-lite",
         "description": "Faster, lower-memory variant of General. Slightly lower quality; useful for quick passes or weaker hardware.",
+        "default_on": False,
+    },
+    "InSPyReNet": {
+        "backend": "inspyrenet",
+        "rembg_name": None,
+        "description": "Different architecture entirely (pyramid-based salient object detection). Worth comparing alongside BEN2 and BiRefNet. MIT licence. Installed lazily on first use; see SPEC.md if install fails on Python 3.14.",
         "default_on": False,
     },
 }
@@ -237,11 +249,11 @@ class App(tk.Tk):
         self.progress.pack_forget()  # hidden until processing starts
 
         # Log
-        f = ttk.LabelFrame(self, text="Output")
+        f = ttk.LabelFrame(self, text="Log")
         f.pack(fill="both", expand=True, **pad)
         log_toolbar = ttk.Frame(f)
         log_toolbar.pack(fill="x", padx=5, pady=(5, 0))
-        ttk.Button(log_toolbar, text="Copy Output",
+        ttk.Button(log_toolbar, text="Copy Log",
                    command=self._copy_log, width=14).pack(side="right")
         self.open_folder_btn = ttk.Button(
             log_toolbar, text="Open Output Folder",
@@ -396,6 +408,76 @@ class App(tk.Tk):
             self._log(f"\nDependency check failed: {e}")
             self._status("Error during dependency check.")
 
+    # ---- Lazy InSPyReNet loader --------------------------------------------
+
+    def _try_load_inspyrenet(self):
+        """Attempt to import, install if needed, and instantiate InSPyReNet.
+
+        Returns the Remover instance on success, or None on any failure
+        (user declined install, pip failed, module failed to construct).
+        Logs the reason and a recovery hint in every failure case. Never
+        raises - the caller relies on a None return to drop InSPyReNet from
+        the run while letting other models continue.
+        """
+        # Step 1: try the import. If it works, the package is already
+        # installed and we can skip straight to model construction.
+        try:
+            from transparent_background import Remover
+        except ImportError:
+            self._log("\nInSPyReNet not installed. It can be installed now, "
+                      "but the install pulls in several large dependencies "
+                      "(~700 MB) and is known to fail on Python 3.14 due to "
+                      "a transitive dependency (stringzilla) that needs a "
+                      "C++ compiler. If install fails, the simplest fix is "
+                      "to run this app under Python 3.12 instead.")
+            ok = self._ask_yesno(
+                "Install InSPyReNet?",
+                "InSPyReNet isn't installed yet.\n\n"
+                "Install it now? This will download several hundred MB of "
+                "extra dependencies (albumentations, kornia, etc.) and may "
+                "fail on Python 3.14 - see the log for details.\n\n"
+                "If install fails, the other selected models will still run."
+            )
+            if not ok:
+                self._log("InSPyReNet install declined. Skipping this model.")
+                return None
+            self._log("Installing transparent-background\u2026")
+            try:
+                install_dep("transparent-background==1.3.4", self._log)
+            except Exception as e:
+                self._log(f"\nInSPyReNet install FAILED: {e}")
+                self._log("Continuing without InSPyReNet. Other models will "
+                          "still run. To use InSPyReNet, try Python 3.12 "
+                          "(see https://www.python.org/downloads/).")
+                return None
+            # Import again now that install has (hopefully) succeeded.
+            try:
+                from transparent_background import Remover
+            except ImportError as e:
+                self._log(f"\nInSPyReNet still not importable after install: {e}")
+                self._log("Continuing without InSPyReNet.")
+                return None
+
+        # Step 2: construct the model. Failures here are unlikely but
+        # possible (e.g. the first-run checkpoint download from Google Drive
+        # is blocked by a proxy), so handle them the same way.
+        self._log("Loading InSPyReNet\u2026")
+        try:
+            import torch
+            device = "cuda:0" if torch.cuda.is_available() else "cpu"
+            # `resize='dynamic'` produces sharper edges than the default
+            # 'static' mode, at the cost of some stability. Worth it for
+            # the high-resolution photography this tool targets - it's
+            # the whole reason for running multiple models.
+            model = Remover(mode="base", device=device, resize="dynamic")
+            self._log(f"  InSPyReNet on {device}")
+            return model
+        except Exception as e:
+            self._log(f"\nInSPyReNet failed to load: {e}")
+            self._log("Continuing without InSPyReNet. Other models will "
+                      "still run.")
+            return None
+
     # ---- Run ---------------------------------------------------------------
 
     def _run(self):
@@ -538,6 +620,7 @@ class App(tk.Tk):
 
             ben2_model = None
             rembg_sessions = {}
+            inspyrenet_model = None
 
             if any(t[0] == "ben2" for t in targets.values()):
                 self._log("Loading BEN2\u2026")
@@ -554,6 +637,28 @@ class App(tk.Tk):
                 if backend == "rembg":
                     self._log(f"Loading {model_name}\u2026")
                     rembg_sessions[folder_name] = new_session(model_name)
+
+            # InSPyReNet is loaded lazily here rather than via REQUIRED_DEPS at
+            # startup because `transparent-background` has a heavy transitive
+            # dep chain (albumentations -> albucore -> stringzilla) that can
+            # fail to install on newer Pythons (e.g. stringzilla 4.x has no
+            # 3.14 wheel as of May 2026 and pip falls back to building from
+            # source, which needs MSVC). If anything fails - user declines,
+            # pip install fails, or the model won't construct - log clearly
+            # and drop the InSPyReNet targets from this run. The other six
+            # models continue normally.
+            if any(t[0] == "inspyrenet" for t in targets.values()):
+                inspyrenet_model = self._try_load_inspyrenet()
+                if inspyrenet_model is None:
+                    # Drop every inspyrenet target so the per-image loop
+                    # below doesn't even try.
+                    targets = {fn: t for fn, t in targets.items()
+                               if t[0] != "inspyrenet"}
+                    if not targets:
+                        self._log("\nNo models left to run. Aborting.")
+                        self._stop_progress(
+                            "InSPyReNet was the only model and it failed to load.")
+                        return
 
             self._log("")
             t_total = time.time()
@@ -586,6 +691,13 @@ class App(tk.Tk):
                         if backend == "ben2":
                             result = ben2_model.inference(
                                 image, refine_foreground=True)
+                        elif backend == "inspyrenet":
+                            # Default `type='rgba'` returns a PIL Image with
+                            # alpha-based transparency - same shape as BEN2
+                            # and rembg outputs, so the save path below works
+                            # unchanged.
+                            result = inspyrenet_model.process(
+                                image, type="rgba")
                         else:
                             result = remove(
                                 image, session=rembg_sessions[folder_name])

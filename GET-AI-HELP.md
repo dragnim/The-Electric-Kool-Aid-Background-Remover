@@ -52,6 +52,11 @@ THE MODELS (AI engines it uses to remove backgrounds):
 - BiRefNet-Portrait - tuned for single people, not great for groups
 - BiRefNet-Massive - like General but trained on more data
 - BiRefNet-Lite - faster and lighter, slightly lower quality
+- InSPyReNet - different architecture; useful to compare with BEN2/BiRefNet.
+  Note: installed lazily on first use. The install can fail on Python 3.14
+  due to a transitive dependency (stringzilla) that needs a C++ compiler.
+  If install fails, switch to Python 3.12 or just use one of the other
+  six models, which work fine on 3.14.
 BEN2 and BiRefNet-General are ticked by default.
 
 INSTALLATION - RECOMMENDED (virtual environment):
@@ -84,6 +89,9 @@ OUTPUT:
 COMMON ISSUES:
 - "Git is not recognized" - Git is not installed or not on PATH, reinstall it
 - Install fails on a package - try Python 3.12 if you are on a newer version
+- InSPyReNet install fails with "Microsoft Visual C++ 14.0 or greater is
+  required" - this is a known issue on Python 3.14. Untick InSPyReNet and
+  use the other six models, or switch to Python 3.12 where InSPyReNet works.
 - "No images found" - only the top level of the folder is scanned, not subfolders
 - WebP "image too large" error - your image exceeds 16383px, use PNG or TIFF instead
 
