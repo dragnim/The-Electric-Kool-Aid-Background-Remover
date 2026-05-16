@@ -122,7 +122,7 @@ run on macOS. However, the app itself (`the-electric-kool-aid-background-remover
 is cross-platform. If you have Python 3.12+ and install the dependencies
 manually (`pip install -r requirements.txt`), the app should work. Apple
 Silicon Macs may benefit from MPS acceleration but this is not yet
-configured automatically. Official Mac support is on the roadmap.
+configured automatically.
 
 ## Installation
 
