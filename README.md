@@ -14,6 +14,24 @@ Download the zip from the [releases page](https://github.com/dragnim/The-Electri
 
 ---
 
+## What this installs
+
+Here is everything `launch.bat` puts on your computer, so there are no surprises:
+
+| Component | Why | Size |
+|-----------|-----|------|
+| Python 3.12 | Runs the app | ~30 MB — only if you don't already have Python |
+| PyTorch | The AI engine that powers background removal | ~2.5 GB — downloaded once |
+| rembg + BEN2 + other libraries | Model interfaces and image handling | ~200 MB |
+| Model weights | The actual AI data, downloaded per model on first use | 300 MB – 1 GB each |
+| GPU PyTorch (optional) | Faster processing if you have an NVIDIA GPU | ~2.5 GB — replaces the CPU version above |
+
+Everything except model weights is installed once and reused. Model weights are cached in your home folder and can be deleted individually using the trash button next to each model in the app, or all at once via `cleanup.bat`.
+
+Nothing is uploaded anywhere. All processing happens on your machine.
+
+---
+
 ## What is this tool?
 
 A free, local, privacy-respecting background remover for Windows. Runs
@@ -30,6 +48,19 @@ quality on hair, glasses, and complex backgrounds matters - but in reality
 you can run anything through it. Just try it and see.
 
 ![The Electric Kool-Aid Background Remover v3.11](assets/screenshot.png)
+
+## Should I use this?
+
+**Yes, if:**
+- You have batches of images to process and don't want to upload them to a cloud service
+- You want to compare multiple AI models on your own material before committing to one
+- You need lossless output (PNG, TIFF, or WebP) with DPI metadata preserved
+- You're a designer or photographer who wants a local, private, no-subscription tool
+
+**No, if:**
+- You need instant browser results with no setup — try [remove.bg](https://www.remove.bg) or [Adobe Express](https://www.adobe.com/express/)
+- You only have one or two images — an online tool is faster for occasional use
+- You're not comfortable with a large first-time download (~2.5 GB for the AI engine)
 
 ## What this tool is not
 
@@ -131,7 +162,9 @@ that aren't commercially signed. The bat file does exactly what it says —
 you can read every line of it in a text editor before running. Click
 **Run** to continue.
 
-### Quickest safe install
+### For developers: clone the repo
+
+If you want the full source history, this requires Git:
 
 ```powershell
 git clone https://github.com/dragnim/The-Electric-Kool-Aid-Background-Remover.git

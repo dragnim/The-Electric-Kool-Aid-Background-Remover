@@ -16,7 +16,7 @@ confirmed here before inclusion.
 |---------|--------|
 | Display name | BEN2 |
 | Source | https://huggingface.co/PramaLLC/BEN2 |
-| Install | `pip install git+https://github.com/PramaLLC/BEN2.git` |
+| Install | `pip install https://github.com/PramaLLC/BEN2/archive/2c99a5da477b5523585bfa5c893888a6e818a8f6.zip` (Git not required) |
 | Licence | MIT |
 | Licence URL | https://huggingface.co/PramaLLC/BEN2/blob/main/LICENSE |
 | Verified | May 2026 |
