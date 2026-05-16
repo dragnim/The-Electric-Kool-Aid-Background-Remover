@@ -362,8 +362,7 @@ details on each model.
 > decisions were the human's: what the tool needed to do, which models to
 > include, the privacy framing, the output formats, when to stop adding
 > features, and the name. The human's other contributions were knowing what
-> they wanted, asking good questions, and the occasional "that's rubbish,
-> try again."
+> they wanted, asking good questions, and the occasional "Claude, WTF?"
 >
 > No code was written by hand. No docs were written by hand. Vibe coding
 > is real, it works, and this is what it looks like when you don't pretend
