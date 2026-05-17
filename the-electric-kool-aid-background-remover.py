@@ -361,7 +361,7 @@ class App(_AppBase):
             def _make_trash_cmd(n):
                 return lambda: self._trash_model(n)
 
-            trash_btn = ttk.Button(header, text="\U0001F5D1", width=2,
+            trash_btn = ttk.Button(header, text="✕", width=2,
                                    command=_make_trash_cmd(name))
             trash_btn.pack(side="right", padx=(4, 0))
             self.model_trash_btns[name] = trash_btn
