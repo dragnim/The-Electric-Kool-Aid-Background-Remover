@@ -326,6 +326,12 @@ Run.
   check total physical RAM at startup. If below 24 GB, a note is logged
   advising the user to run one model at a time to avoid paging slowdowns.
 
+  **UI polish:** model status label changed from "Ready" to "Installed"
+  (clearer meaning); licence mentions removed from all model descriptions
+  (licence info belongs in MODEL-LICENCES.md, not one-line UI labels);
+  Models LabelFrame caption simplified from "Models (select one or more)"
+  to "Models" (consistent with other section labels).
+
 - **v3.11** - two changes: eliminated Git as a requirement, and added the
   launcher file set (`launch.bat`, `gpu_setup.py`, `cleanup.bat`).
 
@@ -355,7 +361,7 @@ Run.
   section. SPEC Non-goals updated (GPU is now actively offered).
 
 - **v3.10** - model cache status indicators and trash buttons. Each model
-  row in the UI now shows a status label (e.g. "Ready  420 MB" or
+  row in the UI now shows a status label (e.g. "Installed  420 MB" or
   "Not downloaded") and a small × trash button on the right side of the
   header line. The trash button is always present but greyed out (disabled)
   when the model isn't cached, so the layout never shifts. Clicking the
