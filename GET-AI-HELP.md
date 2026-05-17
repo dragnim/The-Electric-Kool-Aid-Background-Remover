@@ -39,6 +39,8 @@ HELP FILE VERSION:
 Updated: May 2026
 Applies to: The Electric Kool-Aid Background Remover v3.12
 
+---
+
 WHAT IT IS:
 A free, local, privacy-respecting background remover for Windows. It
 removes backgrounds from images using AI models and saves transparent
@@ -53,7 +55,7 @@ THE TOOL:
 
 SYSTEM REQUIREMENTS:
 - Windows 10 or 11
-- Python 3.12 or newer (Python 3.14 is confirmed working) - launch.bat will install Python automatically if needed
+- Python 3.12 or newer. Python 3.12 is the safest choice if you want all models including InSPyReNet. Python 3.14 works for the main six models but InSPyReNet may fail to install. launch.bat will install Python automatically if needed.
 - Around 5-6 GB of free disk space for model weights and PyTorch on first run
 - A GPU is not required - it runs on CPU by default
 - If you have an NVIDIA GPU, launch.bat will detect it and offer a faster GPU-accelerated version of PyTorch
@@ -126,6 +128,7 @@ MODEL CHOICE - QUICK GUIDE:
 
 OUTPUT - WHERE FILES ARE SAVED:
 Output folders are created inside your input folder, one per model.
+For a single image, the output folder is created in the same folder as that image.
 Folder name format: ModelName-FORMAT (e.g. BEN2-PNG)
 File name format: originalname_ModelName.ext (e.g. cat_BEN2.png)
 
@@ -173,6 +176,7 @@ WHEN ASKING FOR HELP, INCLUDE:
 - Whether you used launch.bat or manual install
 - Whether you chose CPU or GPU PyTorch
 - Which model(s) you selected
+- Click Copy Log and paste the full log text - this is the most useful thing you can share
 - The exact error message from the log
 - Whether the issue happened during install, model download, or image processing
 
@@ -186,5 +190,5 @@ everything it needs to help you properly.
 
 ---
 
-*This document was written by Claude (Anthropic) as part of the
-Electric Kool-Aid Background Remover project.*
+*This document was prepared as part of the Electric Kool-Aid Background
+Remover project to help users get support from AI assistants.*
