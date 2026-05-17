@@ -57,7 +57,7 @@ you can run anything through it. Just try it and see.
 
 ## What it does
 
-Pick a folder of images **or a single image**, pick a format, tick the
+Pick a folder of images **or a single image** (or drag and drop either onto the window), pick a format, tick the
 model(s) you want to use, and hit Run. The app removes the background from
 every image and saves transparent cutouts into labelled subfolders next to
 your input.
