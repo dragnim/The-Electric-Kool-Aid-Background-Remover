@@ -83,7 +83,7 @@ MODELS = {
     "BEN2": {
         "backend": "ben2",
         "rembg_name": None,
-        "description": "Strong on hair edges and 4K images. Confidence-guided matting refines low-confidence pixels. MIT licence.",
+        "description": "Strong on hair edges and 4K images. Confidence-guided matting refines low-confidence pixels.",
         "default_on": True,
         # Weights are downloaded by HuggingFace hub into a versioned folder
         # tree; presence of the top-level repo folder is enough to confirm
@@ -94,7 +94,7 @@ MODELS = {
     "BiRefNet-General": {
         "backend": "rembg",
         "rembg_name": "birefnet-general",
-        "description": "Reliable general-purpose default. Strong fine-edge detection across a wide variety of subjects. MIT licence.",
+        "description": "Reliable general-purpose default. Strong fine-edge detection across a wide variety of subjects.",
         "default_on": True,
         "cache_path": "~/.u2net/birefnet-general.onnx",
         "cache_is_dir": False,
@@ -102,7 +102,7 @@ MODELS = {
     "BiRefNet-HR": {
         "backend": "rembg",
         "rembg_name": "birefnet-hrsod",
-        "description": "High-resolution variant (HRSOD), trained for sharp boundaries on large images. Useful for 300 DPI source material where General softens fine edges. MIT licence.",
+        "description": "High-resolution variant (HRSOD), trained for sharp boundaries on large images. Useful for 300 DPI source material where General softens fine edges.",
         "default_on": False,
         "cache_path": "~/.u2net/birefnet-hrsod.onnx",
         "cache_is_dir": False,
@@ -134,7 +134,7 @@ MODELS = {
     "InSPyReNet": {
         "backend": "inspyrenet",
         "rembg_name": None,
-        "description": "Different architecture entirely (pyramid-based salient object detection). Worth comparing alongside BEN2 and BiRefNet. MIT licence. Installed lazily on first use; see SPEC.md if install fails on Python 3.14.",
+        "description": "Different architecture entirely (pyramid-based salient object detection). Worth comparing alongside BEN2 and BiRefNet. Installed lazily on first use; see SPEC.md if install fails on Python 3.14.",
         "default_on": False,
         "cache_path": "~/.transparent-background/ckpt_base.pth",
         "cache_is_dir": False,
