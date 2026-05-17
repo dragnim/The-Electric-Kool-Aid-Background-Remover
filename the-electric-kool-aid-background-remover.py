@@ -338,7 +338,7 @@ class App(_AppBase):
         self.format_var.trace_add("write", self._on_format_change)
 
         # Models
-        f = ttk.LabelFrame(self, text="Models (select one or more)")
+        f = ttk.LabelFrame(self, text="Models")
         f.pack(fill="x", **pad)
         self.model_vars = {}
         for name, info in MODELS.items():
