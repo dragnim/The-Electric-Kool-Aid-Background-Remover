@@ -185,6 +185,32 @@ def _delete_cache(model_name):
         return False, f"Delete failed: {e}"
 
 
+# --- System helpers ----------------------------------------------------------
+
+def _get_total_ram_gb():
+    """Return total physical RAM in GB via ctypes, or None on failure."""
+    try:
+        import ctypes
+        class _MEMORYSTATUSEX(ctypes.Structure):
+            _fields_ = [
+                ("dwLength",                ctypes.c_ulong),
+                ("dwMemoryLoad",            ctypes.c_ulong),
+                ("ullTotalPhys",            ctypes.c_ulonglong),
+                ("ullAvailPhys",            ctypes.c_ulonglong),
+                ("ullTotalPageFile",        ctypes.c_ulonglong),
+                ("ullAvailPageFile",        ctypes.c_ulonglong),
+                ("ullTotalVirtual",         ctypes.c_ulonglong),
+                ("ullAvailVirtual",         ctypes.c_ulonglong),
+                ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+            ]
+        stat = _MEMORYSTATUSEX()
+        stat.dwLength = ctypes.sizeof(stat)
+        ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(stat))
+        return stat.ullTotalPhys / (1024 ** 3)
+    except Exception:
+        return None
+
+
 # --- Dependency handling -----------------------------------------------------
 
 def check_missing_deps():
@@ -603,6 +629,13 @@ class App(_AppBase):
     def _check_deps(self):
         self._status("Checking dependencies\u2026")
         self._log("Checking required dependencies\u2026")
+        ram = _get_total_ram_gb()
+        if ram is not None and ram < 24:
+            self._log(
+                f"\nNote: {ram:.0f} GB RAM detected. Running multiple models "
+                f"simultaneously may cause slowdowns. For best performance on "
+                f"low-RAM machines, run one model at a time."
+            )
         try:
             missing = check_missing_deps()
             if not missing:

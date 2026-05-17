@@ -251,6 +251,13 @@ start of a run and reused for every image - you don't pay the loading
 cost per image. This is the right behaviour for large batches and means
 memory usage stays stable throughout the run.
 
+**Low RAM? Run one model at a time.** All selected models are loaded
+into memory simultaneously, so running five models at once uses roughly
+five times the RAM of running one. On a machine with 16 GB or less this
+can cause Windows to start paging to disk, which makes inference very
+slow. The fix is simple: tick one model, run, then tick the next. The
+skip-existing logic means you can do this without reprocessing anything.
+
 ## Freeing up disk space
 
 Run **`cleanup.bat`** for a guided walkthrough of everything the app has
@@ -311,6 +318,13 @@ which needs a C++ toolchain that you probably don't have. The simplest
 fix is to switch to Python 3.12, where prebuilt wheels exist. The other
 six models are unaffected and continue to work on 3.14 normally; just
 untick InSPyReNet and run with the rest.
+
+**Processing is very slow or the system becomes unresponsive.** If you
+have 16 GB of RAM or less, running multiple models at once can fill
+physical memory and cause Windows to swap to disk, which is very slow.
+Run one model at a time — tick one checkbox, click Run, then tick the
+next. The app skips images that already have output, so you won't
+reprocess anything.
 
 **"No images found."** The folder you picked has no files with a
 supported extension. Subfolders are not scanned - only the top level of
