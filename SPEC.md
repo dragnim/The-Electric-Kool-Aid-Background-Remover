@@ -297,6 +297,22 @@ Run.
 
 ## Version history
 
+- **v3.12** - two user-experience additions: settings persistence and drag-and-drop.
+
+  **Settings persistence:** the app now saves the last-used input folder,
+  output format, and model checkbox state to `~/.ekbr_settings.json` on
+  each run and restores them on startup. A missing or corrupt settings file
+  is silently ignored so defaults always apply cleanly.
+
+  **Drag and drop:** `tkinterdnd2` added as a required dependency. The App
+  class subclasses `TkinterDnD.Tk` when the package is available
+  (`_AppBase` variable, determined at import time; falls back to `tk.Tk`
+  if not yet installed). Dropping a folder onto the window sets it as the
+  folder input; dropping a single image file sets it as the image input;
+  dropping multiple files sets their parent folder. If tkinterdnd2 is
+  installed mid-session the user must restart the app to activate DnD,
+  since the base class is fixed at import time.
+
 - **v3.11** - two changes: eliminated Git as a requirement, and added the
   launcher file set (`launch.bat`, `gpu_setup.py`, `cleanup.bat`).
 

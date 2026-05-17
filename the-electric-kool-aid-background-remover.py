@@ -1,5 +1,5 @@
 """
-The Electric Kool-Aid Background Remover  (v3.11)
+The Electric Kool-Aid Background Remover  (v3.12)
 ==================================================
 
 A single-file Tkinter app that runs background removal across multiple models
@@ -41,7 +41,7 @@ except ImportError:
 
 # --- Constants ---------------------------------------------------------------
 
-__version__ = "3.11"
+__version__ = "3.12"
 
 APP_TITLE = f"The Electric Kool-Aid Background Remover v{__version__}"
 WINDOW_SIZE = "780x880"
