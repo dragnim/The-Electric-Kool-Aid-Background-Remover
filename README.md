@@ -30,7 +30,7 @@ Originally built for high-resolution professional photography where edge
 quality on hair, glasses, and complex backgrounds matters — but in reality
 you can run anything through it. Just try it and see.
 
-![The Electric Kool-Aid Background Remover v3.11](assets/screenshot.png)
+![The Electric Kool-Aid Background Remover v3.12](assets/screenshot.png)
 
 ## What this tool is not
 
