@@ -16,18 +16,18 @@ Download the zip from the [releases page](https://github.com/dragnim/The-Electri
 
 ## What is this tool?
 
-A free, local, privacy-respecting background remover, primarily aimed at
-Windows. Runs
-entirely on your own machine - no cloud upload, no subscription, no
-images sent anywhere.
+A free tool that cuts subjects out of photos — people, products, objects,
+anything — and saves them as transparent images. Point it at a folder,
+pick your models, click Run. Your images stay on your computer the whole
+time; nothing is uploaded anywhere.
 
 Supports batch processing of whole folders or single images, with a choice
 of seven AI models so you can find the one that works best on your material.
 Output is PNG, TIFF, or WebP with transparency preserved and DPI metadata
-carried through - ready for web, print, or further editing.
+carried through — ready for web, print, or further editing.
 
 Originally built for high-resolution professional photography where edge
-quality on hair, glasses, and complex backgrounds matters - but in reality
+quality on hair, glasses, and complex backgrounds matters — but in reality
 you can run anything through it. Just try it and see.
 
 ![The Electric Kool-Aid Background Remover v3.11](assets/screenshot.png)
@@ -117,13 +117,6 @@ to compare.
 - A GPU is **not** required. The tool runs on CPU by default and uses CUDA
   automatically if a compatible NVIDIA GPU is present.
 
-**Mac users:** `launch.bat` and `cleanup.bat` are Windows-only and won't
-run on macOS. However, the app itself (`the-electric-kool-aid-background-remover.py`)
-is cross-platform. If you have Python 3.12+ and install the dependencies
-manually (`pip install -r requirements.txt`), the app should work. Apple
-Silicon Macs may benefit from MPS acceleration but this is not yet
-configured automatically. Official Mac support is on the roadmap.
-
 ## Installation
 
 ### Easiest: double-click launch.bat
@@ -135,10 +128,9 @@ offer to install it locally if needed, and start the app.
 **Windows security warning:** Windows will show a security warning the
 first time you run `launch.bat` because it was downloaded from the
 internet and is not code-signed. This is normal for open-source tools
-that aren't commercially signed. If you want to verify the file before
-running it, you can upload it to [VirusTotal](https://www.virustotal.com)
-which will scan it against dozens of security engines and report back.
-Once you're happy, click **Run** to continue.
+that aren't commercially signed. The bat file does exactly what it says —
+you can read every line of it in a text editor before running. Click
+**Run** to continue.
 
 ### Quickest safe install
 
