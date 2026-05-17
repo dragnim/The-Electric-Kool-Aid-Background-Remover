@@ -213,6 +213,17 @@ def _get_total_ram_gb():
 
 # --- Dependency handling -----------------------------------------------------
 
+def _format_eta(seconds):
+    """Format a seconds value as a human-readable ETA string."""
+    if seconds < 60:
+        return f"{seconds}s"
+    m, s = divmod(seconds, 60)
+    if m < 60:
+        return f"{m}m {s:02d}s"
+    h, m = divmod(m, 60)
+    return f"{h}h {m:02d}m"
+
+
 def check_missing_deps():
     """Return list of (module_name, pip_target) for any missing dependency."""
     missing = []
@@ -925,10 +936,19 @@ class App(_AppBase):
                 if self._cancel_requested:
                     self._log("\n=== Cancelled by user ===")
                     break
+
+                # ETA: available from image 2 onwards once we have a sample rate.
+                eta_suffix = ""
+                if idx > 1:
+                    elapsed = time.time() - t_total
+                    avg_per_image = elapsed / (idx - 1)
+                    remaining_secs = int(avg_per_image * (len(images) - idx + 1))
+                    eta_suffix = f"  \u00b7  ~{_format_eta(remaining_secs)} remaining"
+
                 base = img_path.stem
                 self._log(f"[{idx}/{len(images)}] {img_path.name}")
                 self._set_status_base(
-                    f"Processing image {idx}/{len(images)}")
+                    f"Processing image {idx}/{len(images)}{eta_suffix}")
 
                 try:
                     with Image.open(img_path) as src:
@@ -940,7 +960,7 @@ class App(_AppBase):
 
                 for folder_name, (backend, model_name, display_name) in targets.items():
                     self._set_status_base(
-                        f"Image {idx}/{len(images)} \u2013 {display_name}")
+                        f"Image {idx}/{len(images)} \u2013 {display_name}{eta_suffix}")
                     out_path = out_dirs[folder_name] / f"{base}_{display_name}{ext}"
                     if out_path.exists():
                         self._log(f"  {folder_name}: skipped (exists)")
