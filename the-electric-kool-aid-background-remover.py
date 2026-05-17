@@ -366,7 +366,7 @@ class App(_AppBase):
             trash_btn.pack(side="right", padx=(4, 0))
             self.model_trash_btns[name] = trash_btn
 
-            # Status label — shows "Ready  X MB" or "Not downloaded".
+            # Status label — shows "Installed  X MB" or "Not downloaded".
             status_var = tk.StringVar(value="\u2014")
             self.model_status_vars[name] = status_var
             ttk.Label(header, textvariable=status_var,
@@ -460,7 +460,7 @@ class App(_AppBase):
             cached = _is_cached(name)
             if cached:
                 mb = _cache_size_mb(name)
-                text = f"Ready  {mb:.0f} MB"
+                text = f"Installed  {mb:.0f} MB"
                 trash_state = "normal"
             else:
                 text = "Not downloaded"
