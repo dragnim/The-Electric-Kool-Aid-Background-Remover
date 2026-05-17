@@ -61,7 +61,7 @@ The whole application is one `App` class. Key methods:
 | `_setup_dnd()` | Registers the window as a drag-and-drop target (no-op if tkinterdnd2 not available) |
 | `_on_drop(event)` | Handles dropped files/folders; folder → folder input, single file → image input, multiple files → parent folder |
 
-Module-level cache helpers (not methods): `_cache_path(name)`, `_is_cached(name)`, `_cache_size_mb(name)`, `_delete_cache(name)`.
+Module-level helpers (not methods): `_cache_path(name)`, `_is_cached(name)`, `_cache_size_mb(name)`, `_delete_cache(name)`, `_get_total_ram_gb()` (ctypes, no extra dep).
 
 Settings are persisted to `~/.ekbr_settings.json` (keys: `last_folder`, `format`, `models`). Load failures are silently ignored so a corrupt file never blocks startup.
 
@@ -114,7 +114,7 @@ InSPyReNet is **not** in `REQUIRED_DEPS`. `_try_load_inspyrenet()` tries the imp
 
 ## Key Technical Decisions
 
-- **Tkinter** chosen for GUI: stdlib-only, no extra dep, native Windows look.
+- **Tkinter** chosen for GUI: near-stdlib; `tkinterdnd2` is the only UI-specific extra dep (drag-and-drop). Native Windows look.
 - **BEN2 installed from GitHub zip URL** (pinned commit) to avoid requiring Git on user's PATH.
 - **DPI passthrough**: `src.info.get("dpi", (300, 300))` read per-image and passed to `Image.save()`.
 - **Embedded window icon**: base64-encoded ICO constant (`LEMON_ICO_B64`) written to a temp file at startup via `iconbitmap()`. Must be a true multi-resolution ICO (16/32/48 px) — a single large image wrapped in ICO format renders blank at title-bar size on Windows.

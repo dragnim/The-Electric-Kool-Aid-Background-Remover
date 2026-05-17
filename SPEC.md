@@ -43,11 +43,13 @@ compare results before committing to one model for a full batch.
 ## Functional requirements
 
 1. **Input** - a folder of images OR a single image, chosen via separate
-   pickers (Folder… / Image…). Supported extensions: `.jpg .jpeg .png
-   .webp .tif .tiff .bmp`. Error if the selected folder contains no
-   supported images, or if a chosen file isn't a supported type. When a
-   single image is chosen, output folders are still created as siblings
-   inside the image's parent directory.
+   pickers (Folder… / Image…) or by dragging and dropping onto the window.
+   Supported extensions: `.jpg .jpeg .png .webp .tif .tiff .bmp`. Error if
+   the selected folder contains no supported images, or if a chosen file
+   isn't a supported type. When a single image is chosen, output folders
+   are still created as siblings inside the image's parent directory.
+   Dropping multiple files onto the window uses their parent folder as
+   the input folder.
 2. **Format** - choose between `PNG`, `TIFF`, or `WebP` via a dropdown.
    TIFF uses lossless LZW compression. WebP uses lossless mode at quality
    100. All three formats preserve transparency (alpha channel) and carry
@@ -81,6 +83,12 @@ compare results before committing to one model for a full batch.
 6. **Auto-install** - missing Python dependencies are detected on startup
    and offered for `pip install` (with user confirmation). Install output
    streams to the in-app log.
+7. **Settings persistence** - last-used input folder, output format, and
+   model selections are saved to `~/.ekbr_settings.json` on each run and
+   restored on startup. A missing or corrupt file is silently ignored.
+8. **Low-RAM notice** - if total physical RAM is below 24 GB (detected via
+   `ctypes.windll.kernel32.GlobalMemoryStatusEx`, no extra dependency), a
+   note is logged at startup advising the user to run one model at a time.
 
 ## Non-goals
 
@@ -118,7 +126,7 @@ before inclusion, since the likely uses are commercial.
 
 ## Technical decisions
 
-- **Tkinter / ttk** for the GUI. Stdlib-only, no extra dep, looks native enough.
+- **Tkinter / ttk** for the GUI. Near-stdlib — the only UI-specific extra dep is `tkinterdnd2` for drag-and-drop support. Falls back to plain `tk.Tk` if not yet installed; the `_AppBase` variable is set at module load time so a restart is required after install to activate DnD.
 - **Launcher files** - three files sit alongside the `.py` script:
   - `launch.bat` — the user-facing entry point. Checks for Python (embedded
     or system), installs embedded Python 3.12 if needed (into `_python\`),
@@ -312,6 +320,11 @@ Run.
   dropping multiple files sets their parent folder. If tkinterdnd2 is
   installed mid-session the user must restart the app to activate DnD,
   since the base class is fixed at import time.
+
+  **Low-RAM warning:** `_get_total_ram_gb()` uses
+  `ctypes.windll.kernel32.GlobalMemoryStatusEx` (no extra dependency) to
+  check total physical RAM at startup. If below 24 GB, a note is logged
+  advising the user to run one model at a time to avoid paging slowdowns.
 
 - **v3.11** - two changes: eliminated Git as a requirement, and added the
   launcher file set (`launch.bat`, `gpu_setup.py`, `cleanup.bat`).
