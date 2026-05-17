@@ -56,8 +56,14 @@ The whole application is one `App` class. Key methods:
 | `_try_load_inspyrenet()` | Lazy loader for InSPyReNet; graceful None on failure |
 | `_refresh_model_status()` | Checks disk for cached weights, updates status labels |
 | `_trash_model(name)` | Confirms, deletes cached weights, refreshes status |
+| `_load_settings()` | Restores last folder, format, and model checkboxes from `SETTINGS_PATH` on startup |
+| `_save_settings()` | Persists current input, format, and model state to `SETTINGS_PATH` on each run |
+| `_setup_dnd()` | Registers the window as a drag-and-drop target (no-op if tkinterdnd2 not available) |
+| `_on_drop(event)` | Handles dropped files/folders; folder → folder input, single file → image input, multiple files → parent folder |
 
 Module-level cache helpers (not methods): `_cache_path(name)`, `_is_cached(name)`, `_cache_size_mb(name)`, `_delete_cache(name)`.
+
+Settings are persisted to `~/.ekbr_settings.json` (keys: `last_folder`, `format`, `models`). Load failures are silently ignored so a corrupt file never blocks startup.
 
 ### Threading Model
 
@@ -78,6 +84,8 @@ Each entry has: display name, backend, rembg identifier (if applicable), descrip
 | BiRefNet-Massive | rembg | Off | `~/.u2net/birefnet-massive.onnx` |
 | BiRefNet-Lite | rembg | Off | `~/.u2net/birefnet-general-lite.onnx` |
 | InSPyReNet | direct (`transparent_background`), lazy | Off | `~/.transparent-background/ckpt_base.pth` |
+
+`tkinterdnd2` is a required dep for drag-and-drop. `_DND_AVAILABLE` is set at module load time; if tkinterdnd2 is newly installed mid-session the user must restart the app for DnD to activate. The `_AppBase` variable selects `TkinterDnD.Tk` or `tk.Tk` accordingly before the class is defined.
 
 All models are MIT-licensed. BRIA-RMBG was deliberately excluded (CC BY-NC 4.0 forbids commercial use).
 

@@ -24,6 +24,7 @@ Requires:
       PyTorch wheels for everything except InSPyReNet - see SPEC.md).
 """
 
+import json
 import os
 import sys
 import subprocess
@@ -31,6 +32,12 @@ import threading
 from pathlib import Path
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
+
+try:
+    from tkinterdnd2 import TkinterDnD as _TkinterDnD, DND_FILES as _DND_FILES
+    _DND_AVAILABLE = True
+except ImportError:
+    _DND_AVAILABLE = False
 
 # --- Constants ---------------------------------------------------------------
 
@@ -44,6 +51,8 @@ IMG_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".tif", ".tiff", ".bmp"}
 # WebP has a hard canvas-size limit baked into the format. Images larger
 # than this on either axis cannot be encoded as WebP.
 WEBP_MAX_DIM = 16383
+
+SETTINGS_PATH = Path.home() / ".ekbr_settings.json"
 
 # The embedded window icon (LEMON_ICO_B64) lives at the bottom of the file —
 # it's bulky base64 and would dominate the top of the source if placed here.
@@ -61,11 +70,12 @@ def _rembg_pip_target():
 
 
 REQUIRED_DEPS = {
-    "PIL":   "Pillow==12.2.0",
-    "torch": "torch==2.12.0",
-    "cv2":   "opencv-python==4.13.0.92",
-    "rembg": None,   # determined at runtime by _rembg_pip_target()
-    "ben2":  "https://github.com/PramaLLC/BEN2/archive/2c99a5da477b5523585bfa5c893888a6e818a8f6.zip",
+    "PIL":        "Pillow==12.2.0",
+    "torch":      "torch==2.12.0",
+    "cv2":        "opencv-python==4.13.0.92",
+    "rembg":      None,   # determined at runtime by _rembg_pip_target()
+    "ben2":       "https://github.com/PramaLLC/BEN2/archive/2c99a5da477b5523585bfa5c893888a6e818a8f6.zip",
+    "tkinterdnd2": "tkinterdnd2",
 }
 
 # Display name -> metadata
@@ -210,7 +220,10 @@ def install_dep(pip_target, log_func):
 
 # --- App ---------------------------------------------------------------------
 
-class App(tk.Tk):
+_AppBase = _TkinterDnD.Tk if _DND_AVAILABLE else tk.Tk
+
+
+class App(_AppBase):
     def __init__(self):
         super().__init__()
         self.title(APP_TITLE)
@@ -224,6 +237,8 @@ class App(tk.Tk):
         self.model_trash_btns = {}      # name -> the trash Button widget
 
         self._build_ui()
+        self._load_settings()
+        self._setup_dnd()
         self._refresh_model_status()
         threading.Thread(target=self._check_deps, daemon=True).start()
 
@@ -535,6 +550,54 @@ class App(tk.Tk):
         if f:
             self.input_var.set(f)
 
+    # ---- Drag and drop -----------------------------------------------------
+
+    def _setup_dnd(self):
+        if not _DND_AVAILABLE:
+            return
+        self.drop_target_register(_DND_FILES)
+        self.dnd_bind("<<Drop>>", self._on_drop)
+
+    def _on_drop(self, event):
+        paths = [Path(p) for p in self.tk.splitlist(event.data)]
+        if not paths:
+            return
+        first = paths[0]
+        if first.is_dir():
+            self.input_var.set(str(first))
+        elif first.is_file():
+            # Multiple files dropped → use their parent folder
+            self.input_var.set(str(first) if len(paths) == 1
+                               else str(first.parent))
+
+    # ---- Settings persistence ----------------------------------------------
+
+    def _load_settings(self):
+        try:
+            data = json.loads(SETTINGS_PATH.read_text())
+            if last := data.get("last_folder"):
+                self.input_var.set(last)
+            if fmt := data.get("format"):
+                if fmt in self.format_descriptions:
+                    self.format_var.set(fmt)
+                    self._on_format_change()
+            for name, checked in data.get("models", {}).items():
+                if name in self.model_vars:
+                    self.model_vars[name].set(bool(checked))
+        except Exception:
+            pass
+
+    def _save_settings(self):
+        try:
+            data = {
+                "last_folder": self.input_var.get().strip(),
+                "format": self.format_var.get(),
+                "models": {n: v.get() for n, v in self.model_vars.items()},
+            }
+            SETTINGS_PATH.write_text(json.dumps(data, indent=2))
+        except Exception:
+            pass
+
     # ---- Dependency check --------------------------------------------------
 
     def _check_deps(self):
@@ -727,6 +790,7 @@ class App(tk.Tk):
         self.open_folder_btn.config(state="disabled")
         self._cancel_requested = False
         self._last_input_dir = str(input_dir)
+        self._save_settings()
         self._start_progress("Processing")
         threading.Thread(
             target=self._process,
