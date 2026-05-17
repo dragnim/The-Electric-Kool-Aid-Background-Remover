@@ -57,8 +57,9 @@ you can run anything through it. Just try it and see.
 
 ## What it does
 
-Pick a folder of images **or a single image** (or drag and drop either onto the window), pick a format, tick the
-model(s) you want to use, and hit Run. The app removes the background from
+Pick a folder of images **or a single image**, pick a format, tick the
+model(s) you want to use, and hit Run. You can also drag and drop a folder
+or image directly onto the window. The app removes the background from
 every image and saves transparent cutouts into labelled subfolders next to
 your input.
 
@@ -112,7 +113,7 @@ to compare.
 ## Requirements
 
 - Windows 10 or 11.
-- Python 3.12 or newer. Python 3.14 is tested and works.
+- Python 3.12 or newer. Python 3.12 is the safest choice — all seven models work. Python 3.14 works for the main six models but InSPyReNet may fail to install (see Troubleshooting).
 - ~5 GB of free disk space for model weights and PyTorch on first run.
 - A GPU is **not** required. The tool runs on CPU by default and uses CUDA
   automatically if a compatible NVIDIA GPU is present.
@@ -180,7 +181,8 @@ If you just want to get going and aren't worried about dependency isolation:
 ## Usage
 
 1. Pick your input. Click **Folder…** to process every image in a folder,
-   or **Image…** to process just one image. Supported formats:
+   or **Image…** to process just one image. You can also drag and drop
+   a folder or image directly onto the window. Supported formats:
    `.jpg .jpeg .png .webp .tif .tiff .bmp`.
 2. Pick an output format from the dropdown (PNG, TIFF, or WebP). A short
    description of each format appears next to the picker.
